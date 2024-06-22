@@ -23,6 +23,7 @@ def main(maxSize):
     centreOfZoneDistance = radius / 2
     circle1 = plt.Circle((0, 0), radius, color='g', fill=False)
     circle2 = plt.Circle((0, Y), radius, color='g', fill=False)
+
     circle3 = plt.Circle((X, 0), radius, color='g', fill=False)
     circle4 = plt.Circle((X, Y), radius, color='g', fill=False)
     circle5 = plt.Circle((X / 2, Y / 2), radius, color='g', fill=False)

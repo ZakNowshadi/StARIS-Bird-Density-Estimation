@@ -16,8 +16,16 @@ def main(sizeofGraph):
     while x < sizeofGraph and y < sizeofGraph:
         plt.plot(x, y, 'bo')
         BaseGraphGenerator.main(sizeofGraph)
+        # Adding a legand to the graph on the right side:
+        #   - Purple is the sensors
+        #   - Red is the centre of the sensor zone
+        #   - Green line is the sensor zone
+        #  - Blue is the bird walker
+        plt.legend(['Sensor', 'Centre of Sensor Zone', 'Sensor Zone', 'Bird Walker'])
+
+
         plt.draw()
-        plt.pause(0.3)  # short pause
+        plt.pause(0.5)  # short pause
         plt.close('all')
         x += 1
         y += 1

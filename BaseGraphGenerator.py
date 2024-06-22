@@ -19,6 +19,7 @@ def main(maxSize):
 
     # Draw a green of circle around each sensor
     radius = 3.5
+    centreOfZoneDistance = radius / 2
     circle1 = plt.Circle((0, 0), radius, color='g', fill=False)
     circle2 = plt.Circle((0, Y), radius, color='g', fill=False)
     circle3 = plt.Circle((X, 0), radius, color='g', fill=False)
@@ -30,3 +31,9 @@ def main(maxSize):
     plt.gca().add_artist(circle3)
     plt.gca().add_artist(circle4)
     plt.gca().add_artist(circle5)
+
+    # Putting a red dot a the halfway point between the centre and itsa radius
+    plt.plot(centreOfZoneDistance, centreOfZoneDistance, 'ro')
+    plt.plot(centreOfZoneDistance, Y - centreOfZoneDistance, 'ro')
+    plt.plot(X - centreOfZoneDistance, centreOfZoneDistance, 'ro')
+    plt.plot(X - centreOfZoneDistance, Y - centreOfZoneDistance, 'ro')

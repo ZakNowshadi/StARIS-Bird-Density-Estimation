@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from matplotlib.lines import Line2D
 
 
 def main(maxSize):
@@ -12,7 +13,7 @@ def main(maxSize):
     plt.plot(X / 2, Y / 2, 'mo')
 
     # Placing a red dot in each corner
-    plt.plot(0, 0, 'mo')
+    plt.plot(0, 0, 'mo', label='sensor')
     plt.plot(0, Y, 'mo')
     plt.plot(X, 0, 'mo')
     plt.plot(X, Y, 'mo')
@@ -32,8 +33,8 @@ def main(maxSize):
     plt.gca().add_artist(circle4)
     plt.gca().add_artist(circle5)
 
-    # Putting a red dot a the halfway point between the centre and itsa radius
-    plt.plot(centreOfZoneDistance, centreOfZoneDistance, 'ro')
+    # Putting a red dot a halfway point between the centre and its radius
+    plt.plot(centreOfZoneDistance, centreOfZoneDistance, 'ro', label='centre of sensor zone')
     plt.plot(centreOfZoneDistance, Y - centreOfZoneDistance, 'ro')
     plt.plot(X - centreOfZoneDistance, centreOfZoneDistance, 'ro')
     plt.plot(X - centreOfZoneDistance, Y - centreOfZoneDistance, 'ro')

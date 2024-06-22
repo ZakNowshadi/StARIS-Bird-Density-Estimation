@@ -14,16 +14,14 @@ def main(sizeofGraph):
 
     # The bird walker will move to the top right corner
     while x < sizeofGraph and y < sizeofGraph:
-        plt.plot(x, y, 'bo')
+        plt.plot(x, y, 'bo', label='bird')
         BaseGraphGenerator.main(sizeofGraph)
-        # Adding a legand to the graph on the right side:
+        # Adding a legand to the graph on the left side:
         #   - Purple is the sensors
         #   - Red is the centre of the sensor zone
-        #   - Green line is the sensor zone
         #  - Blue is the bird walker
-        plt.legend(['Sensor', 'Centre of Sensor Zone', 'Sensor Zone', 'Bird Walker'])
-
-
+        plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+        plt.tight_layout()
         plt.draw()
         plt.pause(0.5)  # short pause
         plt.close('all')

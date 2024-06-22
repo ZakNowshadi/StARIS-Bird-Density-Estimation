@@ -3,8 +3,6 @@ import BaseGraphGenerator
 import BirdWalker
 
 # Defining the size of the graph
-sizeofGraph = 10
-BaseGraphGenerator.main(sizeofGraph)
-
-BirdWalker.main()
+maxSize = 10
+BirdWalker.main(maxSize)
 

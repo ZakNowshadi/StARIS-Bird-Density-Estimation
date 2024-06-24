@@ -3,10 +3,23 @@ from matplotlib.lines import Line2D
 
 
 # A sensor class
-class Sensor:
-    def __init__(self, x, y):
+class SensorZone:
+    def __init__(self, x, y, isCentralSensor):
         self.x = x
         self.y = y
+        self.radius = 3.5
+        self.isCentralSensor = isCentralSensor
+        self.centreOfZoneX = None
+        self.centreOfZoneY = None
+        if isCentralSensor:
+            # Set the centre dot to the centre of plot
+            self.centreOfZoneX = x
+            self.centreOfZoneY = y
+        else:
+            # Set the centre dot to the halfway point between centre and its radius, for the corner sensors only
+            # The dot should sit on a line between the centre sensor and the corner sensor
+            self.centreOfZoneX = (x + (x / 2)) / 2
+            self.centreOfZoneY = (y + (y / 2)) / 2
 
     # Getter for x
     def getX(self):
@@ -24,6 +37,19 @@ class Sensor:
     def setY(self, y):
         self.y = y
 
+    def checkIfCentralSensor(self):
+        return self.isCentralSensor
+
+    def drawSensorZone(self):
+        # Plotting the sensor itself
+        plt.plot(self.x, self.y, 'mp', label='sensor')
+        # Draw a green of circle around each sensor
+        circle = plt.Circle((self.x, self.y), self.radius, color='g', fill=False)
+        plt.gca().add_artist(circle)
+
+        # Putting a red dot a halfway point between the centre and its radius
+        plt.plot(self.centreOfZoneX, self.centreOfZoneY, 'ro', label='centre of sensor zone')
+
 
 def main(maxSize):
     # Making the base graph
@@ -34,39 +60,20 @@ def main(maxSize):
     # Make a graph of x by y
     # Placing a purple dot in the center to represent the sensor
     # Making the centre sensor object
-    centreSensor = Sensor(X / 2, Y / 2)
+    centreSensor = SensorZone(X / 2, Y / 2, True)
     plt.plot(centreSensor.getX(), centreSensor.getY(), 'mp', label='sensor')
 
     # Making the corner sensor objects
-    upperLeftSensor = Sensor(0, 0)
-    upperRightSensor = Sensor(0, Y)
-    lowerLeftSensor = Sensor(X, 0)
-    lowerRightSensor = Sensor(X, Y)
+    upperLeftSensor = SensorZone(0, 0, False)
+    upperRightSensor = SensorZone(0, Y, False)
+    lowerLeftSensor = SensorZone(X, 0, False)
+    lowerRightSensor = SensorZone(X, Y, False)
 
-    # Placing a purple dot in the corners to represent the sensors
-    plt.plot(upperLeftSensor.getX(), upperLeftSensor.getY(), 'mp')
-    plt.plot(upperRightSensor.getX(), upperRightSensor.getY(), 'mp')
-    plt.plot(lowerLeftSensor.getX(), lowerLeftSensor.getY(), 'mp')
-    plt.plot(lowerRightSensor.getX(), lowerRightSensor.getY(), 'mp')
 
+    # Drawing each sensor zone's radius
     # Draw a green of circle around each sensor
-    radius = 3.5
-    centreOfZoneDistance = radius / 2
-    circle1 = plt.Circle((0, 0), radius, color='g', fill=False)
-    circle2 = plt.Circle((0, Y), radius, color='g', fill=False)
-
-    circle3 = plt.Circle((X, 0), radius, color='g', fill=False)
-    circle4 = plt.Circle((X, Y), radius, color='g', fill=False)
-    circle5 = plt.Circle((X / 2, Y / 2), radius, color='g', fill=False)
-
-    plt.gca().add_artist(circle1)
-    plt.gca().add_artist(circle2)
-    plt.gca().add_artist(circle3)
-    plt.gca().add_artist(circle4)
-    plt.gca().add_artist(circle5)
-
-    # Putting a red dot a halfway point between the centre and its radius
-    plt.plot(centreOfZoneDistance, centreOfZoneDistance, 'ro', label='centre of sensor zone')
-    plt.plot(centreOfZoneDistance, Y - centreOfZoneDistance, 'ro')
-    plt.plot(X - centreOfZoneDistance, centreOfZoneDistance, 'ro')
-    plt.plot(X - centreOfZoneDistance, Y - centreOfZoneDistance, 'ro')
+    centreSensor.drawSensorZone()
+    upperLeftSensor.drawSensorZone()
+    upperRightSensor.drawSensorZone()
+    lowerLeftSensor.drawSensorZone()
+    lowerRightSensor.drawSensorZone()

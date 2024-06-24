@@ -12,6 +12,11 @@ class Bird:
         self.x = x
         self.y = y
         self.image = mpimg.imread('Images/robin.png')
+        # Will be null if in no sensor zone
+        # Needs to be know so know which sensor to play the sound to as
+        # Under current implementation only one sensor should hear a bird at a time
+        self.currentSensorZone = None
+        self.distanceFromSensor = 0
 
     # Getter for x
     def getX(self):
@@ -30,15 +35,24 @@ class Bird:
         self.y = y
 
     def draw(self):
-        plt.imshow(self.image, extent=[self.x, self.x + 2, self.y, self.y + 2])
+        plt.imshow(self.image, extent=[self.x, self.x + 1, self.y, self.y + 1])
 
-    def checkWhichSensor(self):
-        # Check if the bird is in the sensor zone
-        # If the bird is in the sensor zone, then the sensor will be activated
-        # If the sensor is activated, then the bird will be scared
-        # If the bird is scared, then the bird will move away from the sensor
-        # If the bird is not in the sensor zone, then the bird will move normally
-        pass
+    def sensorZoneCheck(self):
+        # Checking if the bird is in a sensor zone
+        # For each of thew sensor zone objects
+
+        # Finding the distance from each sensor
+        for sensorZone in BaseGraphGenerator.SensorZone.getInstances():
+            # Using the distance formula
+            distance = ((self.x - sensorZone.getX()) ** 2 + (self.y - sensorZone.getY()) ** 2) ** 0.5
+            # If the distance is less than the radius of the sensor zone
+            if distance <= sensorZone.radius:
+                # If the bird is in a sensor zone
+                self.currentSensorZone = sensorZone
+                self.distanceFromSensor = distance
+                return True
+        # If the bird is not in a sensor zone
+        self.currentSensorZone = None
 
 
 def main(sizeofGraph):
@@ -49,18 +63,23 @@ def main(sizeofGraph):
     bird1 = Bird(0, 0)
 
     # The bird walker will move to the top right corner
-    while bird1.getX() < sizeofGraph and bird1.getY() < sizeofGraph:
+    while bird1.getX() <= sizeofGraph and bird1.getY() <= sizeofGraph:
         # Drawing the bird
         bird1.draw()
         BaseGraphGenerator.main(sizeofGraph)
-
-        # Adding the legend
-        plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-        # Ensuring the legend is not cut off
         plt.tight_layout()
         plt.draw()
         plt.pause(0.5)  # short pause
         plt.close('all')
+        # Printing the current coords of the sensor zone it is in
+        print("Bird is at: ", bird1.getX(), bird1.getY())
+        # Checking if the bird is in a sensor zone
+        if bird1.sensorZoneCheck():
+            print("\n--------------------")
+            print("Bird is in a sensor zone")
+            print("Distance from sensor: ", bird1.distanceFromSensor)
+            print("Sensor zone coords: ", bird1.currentSensorZone.getX(), bird1.currentSensorZone.getY())
+
         # Incrementing the coords of the bird
         bird1.setX(bird1.getX() + 1)
         bird1.setY(bird1.getY() + 1)

@@ -3,15 +3,13 @@ from matplotlib import pyplot as plt
 
 # A sensor class
 class SensorZone:
+    instances = []
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.radius = 3.5
-        halfRadius = self.radius / 2
-        self.northWestDot = (x - halfRadius, y + halfRadius)
-        self.northEastDot = (x + halfRadius, y + halfRadius)
-        self.southWestDot = (x - halfRadius, y - halfRadius)
-        self.southEastDot = (x + halfRadius, y - halfRadius)
+        SensorZone.instances.append(self)
 
     # Getter for x
     def getX(self):
@@ -36,11 +34,10 @@ class SensorZone:
         circle = plt.Circle((self.x, self.y), self.radius, color='g', fill=False)
         plt.gca().add_artist(circle)
 
-        # Drawing the dots that represent the corners of the sensor zone
-        plt.plot(self.northWestDot[0], self.northWestDot[1], 'ro')
-        plt.plot(self.northEastDot[0], self.northEastDot[1], 'ro')
-        plt.plot(self.southWestDot[0], self.southWestDot[1], 'ro')
-        plt.plot(self.southEastDot[0], self.southEastDot[1], 'ro')
+    # Returns all the currently existing sensor objects
+    @classmethod
+    def getInstances(cls):
+        return cls.instances
 
 
 def main(maxSize):
@@ -55,7 +52,7 @@ def main(maxSize):
     centreSensor = SensorZone(X / 2, Y / 2)
 
     # Making the corner sensor objects
-    upperLeftSensor = SensorZone(0, 0,)
+    upperLeftSensor = SensorZone(0, 0, )
     upperRightSensor = SensorZone(0, Y)
     lowerLeftSensor = SensorZone(X, 0)
     lowerRightSensor = SensorZone(X, Y)

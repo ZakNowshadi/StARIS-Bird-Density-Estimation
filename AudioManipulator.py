@@ -1,18 +1,24 @@
 from shutil import copyfile
 import os
+from pydub import AudioSegment
 
 
-def main(bird):
+def main(bird, count):
     distance = bird.distanceFromSensor
 
-    # Making a temporary copy of the original audio file
     originalAudioFolder = 'OriginalAudioFiles'
     manipulatedAudioFolder = 'ManipulatedAudioFiles'
-    copyfile(originalAudioFolder + '/single_robin_tweeting.wav', manipulatedAudioFolder + '/tempAudio.wav')
+
+    originalWhistle = AudioSegment.from_file(originalAudioFolder + '/single_robin_tweeting.wav')
 
     # Manipulating the audio file
+    # Using: https://stackoverflow.com/questions/13329617/change-the-volume-of-a-wav-file-in-python
     # Decreasing the amplitude of the sound as the distance from the sensor increases
+    manipulatedWhistle = originalWhistle - (distance * 15)
 
-    # Deleting the entire contents of the manipulated audio tracks folder
-    for file in os.listdir(manipulatedAudioFolder):
-        os.remove(manipulatedAudioFolder + '/' + file)
+    # Saving the manipulated audio file as a new file with a number at the end increasing with each new file
+    manipulatedWhistle.export(manipulatedAudioFolder + '/manipulated_robin_tweeting' + str(count) + '.wav', format='wav')
+
+    # # Deleting the entire contents of the manipulated audio tracks folder
+    # for file in os.listdir(manipulatedAudioFolder):
+    #     os.remove(manipulatedAudioFolder + '/' + file)

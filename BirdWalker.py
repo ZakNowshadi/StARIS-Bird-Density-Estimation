@@ -65,6 +65,7 @@ def main(sizeofGraph):
     # Making a new bird object
     bird1 = Bird(0, 0)
 
+    numberOfTimesInSensorZone = 0
     # The bird walker will move to the top right corner
     while bird1.getX() <= sizeofGraph and bird1.getY() <= sizeofGraph:
         # Drawing the bird
@@ -82,11 +83,11 @@ def main(sizeofGraph):
             print("Bird is in a sensor zone")
             print("Distance from sensor: ", bird1.distanceFromSensor)
             print("Sensor zone coords: ", bird1.currentSensorZone.getX(), bird1.currentSensorZone.getY())
+            # Passing the bird to the AudioManipulator
+            AudioManipulator.main(bird1, numberOfTimesInSensorZone)
+            numberOfTimesInSensorZone += 1
         else:
             print("Bird is NOT in a sensor zone")
-
-        # Passing the bird to the AudioManipulator
-        AudioManipulator.main(bird1)
 
         # Incrementing the coords of the bird
         bird1.setX(bird1.getX() + 1)

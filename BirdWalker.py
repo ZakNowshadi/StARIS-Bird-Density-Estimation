@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 
+import AudioManipulator
 import BaseGraphGenerator
 
 
@@ -53,6 +54,8 @@ class Bird:
                 return True
         # If the bird is not in a sensor zone
         self.currentSensorZone = None
+        self.distanceFromSensor = 0
+        return False
 
 
 def main(sizeofGraph):
@@ -74,11 +77,16 @@ def main(sizeofGraph):
         # Printing the current coords of the sensor zone it is in
         print("Bird is at: ", bird1.getX(), bird1.getY())
         # Checking if the bird is in a sensor zone
+        print("\n--------------------")
         if bird1.sensorZoneCheck():
-            print("\n--------------------")
             print("Bird is in a sensor zone")
             print("Distance from sensor: ", bird1.distanceFromSensor)
             print("Sensor zone coords: ", bird1.currentSensorZone.getX(), bird1.currentSensorZone.getY())
+        else:
+            print("Bird is NOT in a sensor zone")
+
+        # Passing the bird to the AudioManipulator
+        AudioManipulator.main(bird1)
 
         # Incrementing the coords of the bird
         bird1.setX(bird1.getX() + 1)

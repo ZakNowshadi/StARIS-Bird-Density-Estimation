@@ -30,7 +30,7 @@ class Bird:
         self.y = y
 
     def draw(self):
-        plt.imshow(self.image, extent=[self.x, self.x + 1, self.y, self.y + 1])
+        plt.imshow(self.image, extent=[self.x, self.x + 2, self.y, self.y + 2])
 
     def checkWhichSensor(self):
         # Check if the bird is in the sensor zone

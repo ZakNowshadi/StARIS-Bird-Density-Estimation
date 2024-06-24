@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import matplotlib.image as mpimg
 
 import BaseGraphGenerator
 
@@ -10,6 +11,7 @@ class Bird:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.image = mpimg.imread('Images/robin.png')
 
     # Getter for x
     def getX(self):
@@ -26,6 +28,9 @@ class Bird:
     # Setter for y
     def setY(self, y):
         self.y = y
+
+    def draw(self):
+        plt.imshow(self.image, extent=[self.x, self.x + 1, self.y, self.y + 1])
 
     def checkWhichSensor(self):
         # Check if the bird is in the sensor zone
@@ -45,13 +50,13 @@ def main(sizeofGraph):
 
     # The bird walker will move to the top right corner
     while bird1.getX() < sizeofGraph and bird1.getY() < sizeofGraph:
-        plt.plot(bird1.getX(), bird1.getY(), 'bo', label='bird')
+        # Drawing the bird
+        bird1.draw()
         BaseGraphGenerator.main(sizeofGraph)
-        # Adding a legand to the graph on the left side:
-        #   - Purple is the sensors
-        #   - Red is the centre of the sensor zone
-        #  - Blue is the bird walker
+
+        # Adding the legend
         plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+        # Ensuring the legend is not cut off
         plt.tight_layout()
         plt.draw()
         plt.pause(0.5)  # short pause

@@ -31,10 +31,10 @@ class Bird:
 
     def draw(self, ax):
         extent = [self.x, self.x + 1, self.y, self.y + 1]
-        if self.artist is None:
-            self.artist = ax.imshow(self.image, extent=extent)
-        else:
-            self.artist.set_extent(extent)
+        # To fix the problem of the original bird freezing while another moves
+        if self.artist is not None:
+            self.artist.remove()
+        self.artist = ax.imshow(self.image, extent=extent)
 
     def sensorZoneCheck(self):
         # Checking if the bird is in a sensor zone
@@ -66,7 +66,7 @@ class Bird:
 
 def update(frame, bird, ax, sizeofGraph):
     # Incrementing the coords of the bird
-    newX, newY = ((bird.getX() + 1) % sizeofGraph), ((bird.getY() + 1) % sizeofGraph)
+    newX, newY = ((bird.getX() + 0.5) % sizeofGraph), ((bird.getY() + 0.5) % sizeofGraph)
     bird.updatePosition(newX, newY)
     # Printing current coords of the bird
     print("\n-----------------------")
@@ -78,6 +78,7 @@ def update(frame, bird, ax, sizeofGraph):
         # Where the frame acts as the count
         AudioManipulator.main(bird, frame)
 
+    # The comma at the end is to unpack the tuple, so it can be passed as expected into caller
     return bird.artist,
 
 

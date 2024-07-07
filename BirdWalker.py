@@ -29,9 +29,6 @@ class Bird:
     def getY(self):
         return self.y
 
-    # def draw(self):
-    #     plt.imshow(self.image, extent=[self.x, self.x + 1, self.y, self.y + 1])
-
     def draw(self, ax):
         extent = [self.x, self.x + 1, self.y, self.y + 1]
         if self.artist is None:
@@ -69,9 +66,8 @@ class Bird:
 
 def update(frame, bird, ax, sizeofGraph):
     # Incrementing the coords of the bird
-    newX, newY = bird.getX() + 1, bird.getY() + 1
-    # Ensure bird stays within graph bounds
-    bird.updatePosition(newX % sizeofGraph, newY % sizeofGraph)
+    newX, newY = ((bird.getX() + 1) % sizeofGraph), ((bird.getY() + 1) % sizeofGraph)
+    bird.updatePosition(newX, newY)
     # Printing current coords of the bird
     print("\n-----------------------")
     print("Bird is at: ", bird.getX(), bird.getY())
@@ -97,29 +93,11 @@ def main(sizeofGraph):
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)
 
+    bird1.draw(ax)
+
+    plt.draw()
+    plt.pause(0.01)
     # Running the animation - ensuring that the garbage collector does not delete the animation object
     ani = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph), blit=True)
 
     plt.show()
-    # numberOfTimesInSensorZone = 0
-    # # The bird walker will move to the top right corner
-    # while bird1.getX() <= sizeofGraph and bird1.getY() <= sizeofGraph:
-    #     # Drawing the bird
-    #     bird1.draw()
-    #     BaseGraphGenerator.main(sizeofGraph)
-    #     plt.tight_layout()
-    #     plt.draw()
-    #     plt.pause(0.5)  # short pause
-    #     plt.close('all')
-    #     # Printing the current coords of the sensor zone it is in
-    #     print("Bird is at: ", bird1.getX(), bird1.getY())
-    #     # Checking if the bird is in a sensor zone
-    #     print("\n--------------------")
-    #     if bird1.sensorZoneCheck():
-    #         # Passing the bird to the AudioManipulator
-    #         AudioManipulator.main(bird1, numberOfTimesInSensorZone)
-    #         numberOfTimesInSensorZone += 1
-    #     else:
-    #
-    #     # Incrementing the coords of the bird
-    #     bird1.updatePosition(bird1.getX() + 1, bird1.getY() + 1)

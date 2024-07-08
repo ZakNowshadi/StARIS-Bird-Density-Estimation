@@ -9,7 +9,7 @@ import BaseGraphGenerator
 
 # Making a bird class
 class Bird:
-    def __init__(self, x, y, imagePath):
+    def __init__(self, x, y, imagePath, speed):
         self.x = x
         self.y = y
         self.image = mpimg.imread(imagePath)
@@ -18,6 +18,7 @@ class Bird:
         # Under current implementation only one sensor should hear a bird at a time
         self.currentSensorZone = None
         self.distanceFromSensor = 0
+        self.speed = speed
         # The artist object for the bird
         self.artist = None
 
@@ -59,15 +60,14 @@ class Bird:
         print("Bird is NOT in a sensor zone")
         return False
 
-    def updatePosition(self, x, y):
-        self.x = x
-        self.y = y
+    def updatePosition(self, x, y, sizeofGraph):
+        self.x = (x + self.speed) % sizeofGraph
+        self.y = (y + self.speed) % sizeofGraph
 
 
 def update(frame, bird, ax, sizeofGraph):
     # Incrementing the coords of the bird
-    newX, newY = ((bird.getX() + 0.5) % sizeofGraph), ((bird.getY() + 0.5) % sizeofGraph)
-    bird.updatePosition(newX, newY)
+    bird.updatePosition(bird.getX(), bird.getY(), sizeofGraph)
     # Printing current coords of the bird
     print("\n-----------------------")
     print("Bird is at: ", bird.getX(), bird.getY())
@@ -90,7 +90,8 @@ def main(sizeofGraph):
 
     # The bird walker will start in the bottom left corner
     # Making a new bird object
-    bird1 = Bird(0, 0, 'Images/robin.png')
+    speedOfBird = 0.5
+    bird1 = Bird(0, 0, 'Images/robin.png', speedOfBird)
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)
 

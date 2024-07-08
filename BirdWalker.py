@@ -88,16 +88,19 @@ def main(sizeofGraph):
     ax.set_xlim(0, sizeofGraph)
     ax.set_ylim(0, sizeofGraph)
 
-    # The bird walker will start in the bottom left corner
+    # The bird walker will start in the bottom left corner for initial test purposes
     # Making a new bird object
     speedOfBird = 0.5
     bird1 = Bird(0, 0, 'Images/robin.png', speedOfBird)
+
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)
 
+    # Drawing the bird
     bird1.draw(ax)
 
     plt.draw()
+    # Short pause to allow for the new bird to be accurately drawn
     plt.pause(0.01)
     # Running the animation - ensuring that the garbage collector does not delete the animation object
     ani = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph), blit=True)

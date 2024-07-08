@@ -2,6 +2,6 @@
 import BirdWalker
 
 # Defining the size of the graph
-maxSize = 10
+maxSize = 20
 BirdWalker.main(maxSize)
 

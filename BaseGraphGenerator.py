@@ -5,10 +5,10 @@ from matplotlib import pyplot as plt
 class SensorZone:
     instances = []
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, sizeOfGraph):
         self.x = x
         self.y = y
-        self.radius = 3.5
+        self.radius = sizeOfGraph / 3
         SensorZone.instances.append(self)
 
     # Getter for x
@@ -49,13 +49,13 @@ def main(maxSize):
     # Make a graph of x by y
     # Placing a purple dot in the center to represent the sensor
     # Making the centre sensor object
-    centreSensor = SensorZone(X / 2, Y / 2)
+    centreSensor = SensorZone(X / 2, Y / 2, maxSize)
 
     # Making the corner sensor objects
-    upperLeftSensor = SensorZone(0, 0, )
-    upperRightSensor = SensorZone(0, Y)
-    lowerLeftSensor = SensorZone(X, 0)
-    lowerRightSensor = SensorZone(X, Y)
+    upperLeftSensor = SensorZone(0, 0, maxSize)
+    upperRightSensor = SensorZone(0, Y, maxSize)
+    lowerLeftSensor = SensorZone(X, 0, maxSize)
+    lowerRightSensor = SensorZone(X, Y, maxSize)
 
     # Drawing each sensor zone's radius
     # Draw a green of circle around each sensor

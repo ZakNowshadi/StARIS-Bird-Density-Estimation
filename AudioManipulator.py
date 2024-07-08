@@ -4,6 +4,7 @@ from pydub import AudioSegment
 
 
 def main(bird, count):
+    #TODO: Store every audio tick
     distance = bird.distanceFromSensor
 
     originalAudioFolder = 'OriginalAudioFiles'

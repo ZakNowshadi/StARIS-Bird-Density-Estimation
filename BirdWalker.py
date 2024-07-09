@@ -3,16 +3,43 @@ import matplotlib.image as mpimg
 from matplotlib.animation import FuncAnimation
 import AudioManipulator
 import BaseGraphGenerator
+import random
 from random import randint
 
 
-# Making the bird walk from the bottom left corner to the top right corner
+# Making the target class
+class Target:
+    def __init__(self, sizeofGraph):
+        self.x, self.y = randint(0, sizeofGraph), randint(0, sizeofGraph)
+        self.image = mpimg.imread('Images/target.png')
+        self.sizeOfGraph = sizeofGraph
+        self.artist = None
+
+    # Getter for x
+    def getX(self):
+        return self.x
+
+    # Getter for y
+    def getY(self):
+        return self.y
+
+    def setNewTargetCoords(self):
+        self.x, self.y = randint(0, self.sizeOfGraph), randint(0, self.sizeOfGraph)
+
+    def drawTarget(self, ax):
+        extent = [self.x, self.x + 1, self.y, self.y + 1]
+        # To fix the problem of the original bird freezing while another moves
+        if self.artist is not None:
+            self.artist.remove()
+        self.artist = ax.imshow(self.image, extent=extent)
+
 
 # Making a bird class
 class Bird:
-    def __init__(self, x, y, imagePath, species, speed):
+    def __init__(self, x, y, imagePath, species, speed, sizeofGraph):
         self.x = x
         self.y = y
+
         self.image = mpimg.imread(imagePath)
         self.species = species
         # Will be null if in no sensor zone
@@ -23,6 +50,8 @@ class Bird:
         self.speed = speed
         # The artist object for the bird
         self.artist = None
+        # Making the initial target object
+        self.targetObject = Target(sizeofGraph)
 
     # Getter for x
     def getX(self):
@@ -66,11 +95,28 @@ class Bird:
         print("Bird is NOT in a sensor zone")
         return False
 
-    def updatePosition(self, deltaX, deltaY, sizeofGraph):
-        # Updating the position of the bird
-        # The % is to ensure that the bird wraps around the screen when it hits the edge
-        self.x = (self.x + (deltaX * self.speed)) % sizeofGraph
-        self.y = (self.y + (deltaY * self.speed)) % sizeofGraph
+    def updatePosition(self, sizeofGraph):
+        randomLowerBound = 0.5
+        randomUpperBound = 1
+        # if the bird is to the left of the target, move right
+        if self.x < self.targetObject.getX():
+            self.x += self.speed * random.uniform(randomLowerBound, randomUpperBound)
+        elif self.x > self.targetObject.getX():
+            self.x -= self.speed * random.uniform(randomLowerBound, randomUpperBound)
+
+        # if the bird is below the target, move up
+        if self.y < self.targetObject.getY():
+            self.y += self.speed * random.uniform(randomLowerBound, randomUpperBound)
+        elif self.y > self.targetObject.getY():
+            self.y -= self.speed * random.uniform(randomLowerBound, randomUpperBound)
+
+        # Wrap around logic remains unchanged
+        self.x %= sizeofGraph
+        self.y %= sizeofGraph
+
+        # Check if near the target point to generate a new target
+        if abs(self.x - self.targetObject.getX()) < 1 and abs(self.y - self.targetObject.getY()) < 1:
+            self.targetObject.setNewTargetCoords()
 
 
 global count
@@ -80,13 +126,13 @@ count = 0
 def update(frame, bird, ax, sizeofGraph):
     # Incrementing the coords of the bird
     global count
-    deltaX, deltaY = 1, 1
 
-    bird.updatePosition(deltaX, deltaY, sizeofGraph)
+    bird.updatePosition(sizeofGraph)
     # Printing current coords of the bird
     print("\n-----------------------")
     print("Bird is at: ", bird.getX(), bird.getY())
-
+    # Re-draw the target each time the bird moves
+    bird.targetObject.drawTarget(ax)
     bird.draw(ax)
     if bird.sensorZoneCheck():
         # Passing the bird to the AudioManipulator
@@ -112,7 +158,7 @@ def main(sizeofGraph):
     # Starting the bird at random coords between 0 and the size of the graph
     startingX, startingY = randint(0, sizeofGraph), randint(0, sizeofGraph)
 
-    bird1 = Bird(startingX, startingY, 'Images/robin.png', species, speedOfBird)
+    bird1 = Bird(startingX, startingY, 'Images/robin.png', species, speedOfBird, sizeofGraph)
 
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)
@@ -124,6 +170,6 @@ def main(sizeofGraph):
     # Short pause to allow for the new bird to be accurately drawn
     plt.pause(0.01)
     # Running the animation - ensuring that the garbage collector does not delete the animation object
-    ani = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph), blit=True)
+    birdAnimation = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph), blit=True)
 
     plt.show()

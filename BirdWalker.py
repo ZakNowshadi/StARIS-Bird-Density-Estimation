@@ -9,10 +9,11 @@ import BaseGraphGenerator
 
 # Making a bird class
 class Bird:
-    def __init__(self, x, y, imagePath, speed):
+    def __init__(self, x, y, imagePath, species, speed):
         self.x = x
         self.y = y
         self.image = mpimg.imread(imagePath)
+        self.species = species
         # Will be null if in no sensor zone
         # Needs to be know so know which sensor to play the sound to as
         # Under current implementation only one sensor should hear a bird at a time
@@ -29,6 +30,10 @@ class Bird:
     # Getter for y
     def getY(self):
         return self.y
+
+    # Getter for species
+    def getSpecies(self):
+        return self.species
 
     def draw(self, ax):
         extent = [self.x, self.x + 1, self.y, self.y + 1]
@@ -60,14 +65,18 @@ class Bird:
         print("Bird is NOT in a sensor zone")
         return False
 
-    def updatePosition(self, x, y, sizeofGraph):
-        self.x = (x + self.speed) % sizeofGraph
-        self.y = (y + self.speed) % sizeofGraph
+    def updatePosition(self, deltaX, deltaY, sizeofGraph):
+        # Updating the position of the bird
+        # The % is to ensure that the bird wraps around the screen when it hits the edge
+        self.x = (self.x + (deltaX * self.speed)) % sizeofGraph
+        self.y = (self.y + (deltaY * self.speed)) % sizeofGraph
 
 
 def update(frame, bird, ax, sizeofGraph):
     # Incrementing the coords of the bird
-    bird.updatePosition(bird.getX(), bird.getY(), sizeofGraph)
+    deltaX, deltaY = 1, 1
+
+    bird.updatePosition(deltaX, deltaY, sizeofGraph)
     # Printing current coords of the bird
     print("\n-----------------------")
     print("Bird is at: ", bird.getX(), bird.getY())
@@ -76,7 +85,7 @@ def update(frame, bird, ax, sizeofGraph):
     if bird.sensorZoneCheck():
         # Passing the bird to the AudioManipulator
         # Where the frame acts as the count
-        AudioManipulator.main(bird, frame)
+        AudioManipulator.main(bird)
 
     # The comma at the end is to unpack the tuple, so it can be passed as expected into caller
     return bird.artist,
@@ -91,7 +100,8 @@ def main(sizeofGraph):
     # The bird walker will start in the bottom left corner for initial test purposes
     # Making a new bird object
     speedOfBird = 0.5
-    bird1 = Bird(0, 0, 'Images/robin.png', speedOfBird)
+    species = 'robin'
+    bird1 = Bird(0, 0, 'Images/robin.png', species, speedOfBird)
 
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)

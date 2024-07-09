@@ -1,3 +1,4 @@
+import shutil
 from pydub import AudioSegment
 
 global count
@@ -24,6 +25,5 @@ def main(bird):
     filename = f"{bird.getSpecies()}{count}_{bird.getX()},{bird.getY()}.wav"
     filePath = manipulatedAudioFolder + '/' + filename
     manipulatedWhistle.export(filePath, format='wav')
-
 
     count += 1

@@ -1,13 +1,9 @@
 import shutil
 from pydub import AudioSegment
 
-global count
-count = 0
 
-
-def main(bird):
+def main(bird, count):
     # TODO: Store every audio tick
-    global count
     distance = bird.distanceFromSensor
 
     originalAudioFolder = 'OriginalAudioFiles'
@@ -21,9 +17,9 @@ def main(bird):
     manipulatedWhistle = originalWhistle - (distance * 15)
 
     # Saving the manipulated audio file as a new file with a number at the end increasing with each new file
+    # Filename is in the following format:
+    # {species}{count(number of ticks at the point in time, be them in a sensor zone or not)}_{x},{y}.wav
     # The coords of the bird and its species are also included in the file name
     filename = f"{bird.getSpecies()}{count}_{bird.getX()},{bird.getY()}.wav"
     filePath = manipulatedAudioFolder + '/' + filename
     manipulatedWhistle.export(filePath, format='wav')
-
-    count += 1

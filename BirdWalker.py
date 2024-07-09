@@ -3,6 +3,7 @@ import matplotlib.image as mpimg
 from matplotlib.animation import FuncAnimation
 import AudioManipulator
 import BaseGraphGenerator
+from random import randint
 
 
 # Making the bird walk from the bottom left corner to the top right corner
@@ -72,8 +73,13 @@ class Bird:
         self.y = (self.y + (deltaY * self.speed)) % sizeofGraph
 
 
+global count
+count = 0
+
+
 def update(frame, bird, ax, sizeofGraph):
     # Incrementing the coords of the bird
+    global count
     deltaX, deltaY = 1, 1
 
     bird.updatePosition(deltaX, deltaY, sizeofGraph)
@@ -85,8 +91,10 @@ def update(frame, bird, ax, sizeofGraph):
     if bird.sensorZoneCheck():
         # Passing the bird to the AudioManipulator
         # Where the frame acts as the count
-        AudioManipulator.main(bird)
-
+        AudioManipulator.main(bird, count)
+    # If not in a sensor zone, the bird will not make a sound
+    # Incrementing the count
+    count += 1
     # The comma at the end is to unpack the tuple, so it can be passed as expected into caller
     return bird.artist,
 
@@ -101,7 +109,10 @@ def main(sizeofGraph):
     # Making a new bird object
     speedOfBird = 0.5
     species = 'robin'
-    bird1 = Bird(0, 0, 'Images/robin.png', species, speedOfBird)
+    # Starting the bird at random coords between 0 and the size of the graph
+    startingX, startingY = randint(0, sizeofGraph), randint(0, sizeofGraph)
+
+    bird1 = Bird(startingX, startingY, 'Images/robin.png', species, speedOfBird)
 
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)

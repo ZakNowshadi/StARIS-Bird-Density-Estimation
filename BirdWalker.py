@@ -29,8 +29,13 @@ class Target:
         return self.y
 
     def setNewTargetCoords(self):
+        # Variable to slightly reduce the scope of the possible target coords such that
+        # The target is never on the edge of the graph
+        # This is to prevent the target from being partially off the graph
+        slightReduction = 1 / self.sizeOfGraph
+
         self.removeTarget()
-        self.x, self.y = randint(0, self.sizeOfGraph), randint(0, self.sizeOfGraph)
+        self.x, self.y = random.uniform(0, self.sizeOfGraph - slightReduction), random.uniform(0, self.sizeOfGraph - slightReduction)
         print("New target coords: ", self.x, self.y)
 
     def drawTarget(self, ax):
@@ -190,6 +195,6 @@ def main(sizeofGraph):
     # Short pause to allow for the new bird to be accurately drawn
     plt.pause(0.01)
     # Running the animation - ensuring that the garbage collector does not delete the animation object
-    birdAnimation = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph), blit=True)
+    birdAnimation = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph * 20), blit=True)
 
     plt.show()

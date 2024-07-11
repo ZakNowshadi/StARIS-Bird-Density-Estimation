@@ -138,6 +138,7 @@ class Bird:
         self.y %= sizeofGraph
 
         # Check if near the target point to generate a new target
+        # If the bird is within 1 unit of the target, generate a new target
         if abs(self.x - self.targetObject.getX()) < 1 and abs(self.y - self.targetObject.getY()) < 1:
             self.targetObject.setNewTargetCoords()
             self.targetObject.artist = None

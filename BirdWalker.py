@@ -6,6 +6,11 @@ import BaseGraphGenerator
 import random
 from random import randint
 
+# The size of the image will be divided by this number to make it fit the graph
+# Such that the image will be the same relative size no matter the size of the graph
+global imageSizeAdjustment
+imageSizeAdjustment = 14
+
 
 # Making the target class
 class Target:
@@ -29,7 +34,9 @@ class Target:
         print("New target coords: ", self.x, self.y)
 
     def drawTarget(self, ax):
-        extent = [self.x, self.x + 1, self.y, self.y + 1]
+        # Drawing the target as a function of the size of the graph
+        extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
+                  self.y + self.sizeOfGraph / imageSizeAdjustment]
         # To fix the problem of the original bird freezing while another moves
         if self.artist is not None:
             self.removeTarget()
@@ -59,6 +66,7 @@ class Bird:
         self.artist = None
         # Making the initial target object
         self.targetObject = Target(sizeofGraph)
+        self.sizeOfGraph = sizeofGraph
 
     # Getter for x
     def getX(self):
@@ -73,7 +81,9 @@ class Bird:
         return self.species
 
     def draw(self, ax):
-        extent = [self.x, self.x + 1, self.y, self.y + 1]
+        # Drawing the bird as a function of the size of the graph
+        extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
+                  self.y + self.sizeOfGraph / imageSizeAdjustment]
         # To fix the problem of the original bird freezing while another moves
         if self.artist is not None:
             self.artist.remove()

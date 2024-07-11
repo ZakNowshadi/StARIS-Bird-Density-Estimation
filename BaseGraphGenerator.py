@@ -43,11 +43,6 @@ class SensorZone:
         circle = plt.Circle((self.x, self.y), self.radius, color='g', fill=False)
         plt.gca().add_artist(circle)
 
-    # Returns all the currently existing sensor objects
-    @classmethod
-    def getInstances(cls):
-        return cls.instances
-
 
 def main(maxSize):
     # Making the base graph

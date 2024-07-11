@@ -1,4 +1,3 @@
-import shutil
 from pydub import AudioSegment
 
 

@@ -32,11 +32,12 @@ class Target:
         # Variable to slightly reduce the scope of the possible target coords such that
         # The target is never on the edge of the graph
         # This is to prevent the target from being partially off the graph
-        slightReduction = 1 / self.sizeOfGraph
+        slightReduction = self.sizeOfGraph * 0.1
 
         self.removeTarget()
         self.x, self.y = random.uniform(0, self.sizeOfGraph - slightReduction), random.uniform(0,
-                                                                                               self.sizeOfGraph - slightReduction)
+                                                                                               self.sizeOfGraph
+                                                                                               - slightReduction)
         print("New target coords: ", self.x, self.y)
 
     def drawTarget(self, ax):
@@ -104,7 +105,8 @@ class Bird:
 
         for zoneID in possibleZones:
             sensorZone = BaseGraphGenerator.SensorZone.instances[zoneID]
-            distance = self.ifPointIsInsideSensorZoneReturnTheDistanceToTheSensorFromThePoint(self.x, self.y, sensorZone)
+            distance = self.ifPointIsInsideSensorZoneReturnTheDistanceToTheSensorFromThePoint(self.x, self.y,
+                                                                                              sensorZone)
             # If the distance is not -1, the bird is in a sensor zone
             if distance != -1:
                 self.currentSensorZone = sensorZone
@@ -207,6 +209,6 @@ def main(sizeofGraph):
     plt.pause(0.01)
     # Running the animation - ensuring that the garbage collector does not delete the animation object
     birdAnimation = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph * 20),
-                                  blit=True, interval=30)
+                                  blit=True, interval=50)
 
     plt.show()

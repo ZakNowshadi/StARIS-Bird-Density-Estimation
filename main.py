@@ -15,4 +15,3 @@ if os.path.exists(manipulatedAudioFolder):
 os.makedirs(manipulatedAudioFolder)
 
 BirdWalker.main(maxSize)
-

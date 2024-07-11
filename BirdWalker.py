@@ -24,14 +24,21 @@ class Target:
         return self.y
 
     def setNewTargetCoords(self):
+        self.removeTarget()
         self.x, self.y = randint(0, self.sizeOfGraph), randint(0, self.sizeOfGraph)
+        print("New target coords: ", self.x, self.y)
 
     def drawTarget(self, ax):
         extent = [self.x, self.x + 1, self.y, self.y + 1]
         # To fix the problem of the original bird freezing while another moves
         if self.artist is not None:
-            self.artist.remove()
+            self.removeTarget()
         self.artist = ax.imshow(self.image, extent=extent)
+
+    def removeTarget(self):
+        if self.artist is not None:
+            self.artist.remove()
+            self.artist = None
 
 
 # Making a bird class
@@ -117,6 +124,8 @@ class Bird:
         # Check if near the target point to generate a new target
         if abs(self.x - self.targetObject.getX()) < 1 and abs(self.y - self.targetObject.getY()) < 1:
             self.targetObject.setNewTargetCoords()
+            self.targetObject.artist = None
+            self.targetObject.drawTarget(plt.gca())
 
 
 global count
@@ -138,6 +147,7 @@ def update(frame, bird, ax, sizeofGraph):
         # Passing the bird to the AudioManipulator
         # Where the frame acts as the count
         AudioManipulator.main(bird, count)
+    plt.draw()
     # If not in a sensor zone, the bird will not make a sound
     # Incrementing the count
     count += 1

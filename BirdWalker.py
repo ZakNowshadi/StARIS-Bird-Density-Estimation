@@ -16,7 +16,7 @@ imageSizeAdjustment = 14
 class Target:
     def __init__(self, sizeofGraph):
         self.x, self.y = randint(0, sizeofGraph), randint(0, sizeofGraph)
-        self.image = mpimg.imread('Images/target.png')
+        self.image = mpimg.imread('Images/red_target.png')
         self.sizeOfGraph = sizeofGraph
         self.artist = None
 
@@ -104,8 +104,9 @@ class Bird:
 
         for zoneID in possibleZones:
             sensorZone = BaseGraphGenerator.SensorZone.instances[zoneID]
-            distance = ((self.x - sensorZone.getX()) ** 2 + (self.y - sensorZone.getY()) ** 2) ** 0.5
-            if distance <= sensorZone.radius:
+            distance = self.ifPointIsInsideSensorZoneReturnTheDistanceToTheSensorFromThePoint(self.x, self.y, sensorZone)
+            # If the distance is not -1, the bird is in a sensor zone
+            if distance != -1:
                 self.currentSensorZone = sensorZone
                 self.distanceFromSensor = distance
                 print("Bird is in a sensor zone")
@@ -117,6 +118,14 @@ class Bird:
         self.distanceFromSensor = 0
         print("Bird is NOT in a sensor zone")
         return False
+
+    # Returns a positive number (the distance) if the point is within the sensor zone
+    # or -1 if it is not
+    def ifPointIsInsideSensorZoneReturnTheDistanceToTheSensorFromThePoint(self, x, y, sensorZone):
+        distance = ((x - sensorZone.getX()) ** 2 + (y - sensorZone.getY()) ** 2) ** 0.5
+        if distance <= sensorZone.radius:
+            return distance
+        return -1
 
     def updatePosition(self, sizeofGraph):
         randomLowerBound = 0.5
@@ -198,6 +207,6 @@ def main(sizeofGraph):
     plt.pause(0.01)
     # Running the animation - ensuring that the garbage collector does not delete the animation object
     birdAnimation = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph * 20),
-                                  blit=True, interval=25)
+                                  blit=True, interval=30)
 
     plt.show()

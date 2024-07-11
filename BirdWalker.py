@@ -97,22 +97,22 @@ class Bird:
 
     def sensorZoneCheck(self):
         # Checking if the bird is in a sensor zone
-        # For each of thew sensor zone objects
 
-        # Finding the distance from each sensor
-        for sensorZone in BaseGraphGenerator.SensorZone.getInstances():
-            # Using the distance formula
+        birdPoint = (self.x, self.y, self.x, self.y)
+        # Getting the index of the sensor zone that the bird is in
+        possibleZones = list(BaseGraphGenerator.sensorZoneIndex.intersection(birdPoint))
+
+        for zoneID in possibleZones:
+            sensorZone = BaseGraphGenerator.SensorZone.instances[zoneID]
             distance = ((self.x - sensorZone.getX()) ** 2 + (self.y - sensorZone.getY()) ** 2) ** 0.5
-            # If the distance is less than the radius of the sensor zone
             if distance <= sensorZone.radius:
-                # If the bird is in a sensor zone
                 self.currentSensorZone = sensorZone
                 self.distanceFromSensor = distance
                 print("Bird is in a sensor zone")
                 print("Sensor zone coords: ", sensorZone.getX(), sensorZone.getY())
                 print("Distance from sensor: ", distance)
                 return True
-        # If the bird is not in a sensor zone
+
         self.currentSensorZone = None
         self.distanceFromSensor = 0
         print("Bird is NOT in a sensor zone")

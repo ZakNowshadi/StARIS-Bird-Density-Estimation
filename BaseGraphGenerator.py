@@ -1,4 +1,8 @@
 from matplotlib import pyplot as plt
+from rtree import index
+
+# Making the R-Tree index
+sensorZoneIndex = index.Index()
 
 
 # A sensor class
@@ -10,6 +14,9 @@ class SensorZone:
         self.y = y
         self.radius = sizeOfGraph / 3
         SensorZone.instances.append(self)
+        # Adding the sensor into the R-Tree
+        sensorZoneIndex.insert(len(SensorZone.instances) - 1,
+                               (self.x - self.radius, self.y - self.radius, self.x + self.radius, self.y + self.radius))
 
     # Getter for x
     def getX(self):

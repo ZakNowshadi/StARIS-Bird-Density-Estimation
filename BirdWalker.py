@@ -118,7 +118,8 @@ class Bird:
 
         self.currentSensorZone = None
         self.distanceFromSensor = 0
-        print("Bird is NOT in a sensor zone")
+        # Printing that the bird is not in a sensor zone in a red highlight
+        print("\033[91mBird is not in a sensor zone\033[0m")
         return False
 
     # Returns a positive number (the distance) if the point is within the sensor zone

@@ -12,6 +12,43 @@ global imageSizeAdjustment
 imageSizeAdjustment = 14
 
 
+# Home class for the bird walker
+class Home:
+    def __init__(self, sizeofGraph):
+        self.x, self.y = random.uniform(0, sizeofGraph), random.uniform(0, sizeofGraph)
+        self.image = mpimg.imread('Images/bird_nest.png')
+        self.sizeOfGraph = sizeofGraph
+        self.artist = None
+
+    # Getter for x
+    def getX(self):
+        return self.x
+
+    # Getter for y
+    def getY(self):
+        return self.y
+
+    def setRandomCoords(self):
+        self.x = random.uniform(0, self.sizeOfGraph)
+        self.y = random.uniform(0, self.sizeOfGraph)
+        # Printing the random coords of the home in green
+        print("\033[92mHome coords: ", self.x, self.y, "\033[0m")
+
+    def drawHome(self, ax):
+        # Drawing the home as a function of the size of the graph
+        extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
+                  self.y + self.sizeOfGraph / imageSizeAdjustment]
+        # To fix the problem of the original bird freezing while another moves
+        if self.artist is not None:
+            self.removeHome()
+        self.artist = ax.imshow(self.image, extent=extent)
+
+    def removeHome(self):
+        if self.artist is not None:
+            self.artist.remove()
+            self.artist = None
+
+
 # Making the target class
 class Target:
     def __init__(self, sizeofGraph):
@@ -73,6 +110,7 @@ class Bird:
         self.artist = None
         # Making the initial target object
         self.targetObject = Target(sizeofGraph)
+        self.homeObject = Home(sizeofGraph)
         self.sizeOfGraph = sizeofGraph
 
     # Getter for x
@@ -118,7 +156,7 @@ class Bird:
 
         self.currentSensorZone = None
         self.distanceFromSensor = 0
-        # Printing that the bird is not in a sensor zone in a red highlight
+        # Printing that the bird is not in a sensor zone in a red highlight background
         print("\033[91mBird is not in a sensor zone\033[0m")
         return False
 
@@ -155,6 +193,8 @@ class Bird:
             self.targetObject.setNewTargetCoords()
             self.targetObject.artist = None
             self.targetObject.drawTarget(plt.gca())
+            # The location of the home is also changed when the target is reached
+            self.homeObject.setRandomCoords()
 
 
 global count
@@ -171,6 +211,8 @@ def update(frame, bird, ax, sizeofGraph):
     print("Bird is at: ", bird.getX(), bird.getY())
     # Re-draw the target each time the bird moves
     bird.targetObject.drawTarget(ax)
+    # Re-draw the home each time the bird moves
+    bird.homeObject.drawHome(ax)
     bird.draw(ax)
     if bird.sensorZoneCheck():
         # Passing the bird to the AudioManipulator

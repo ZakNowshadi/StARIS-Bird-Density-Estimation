@@ -15,10 +15,11 @@ imageSizeAdjustment = 14
 # Home class for the bird walker
 class Home:
     def __init__(self, sizeofGraph):
-        self.x, self.y = random.uniform(0, sizeofGraph), random.uniform(0, sizeofGraph)
-        self.image = mpimg.imread('Images/bird_nest.png')
         self.sizeOfGraph = sizeofGraph
         self.artist = None
+        self.x, self.y = None, None
+        self.setRandomCoords()
+        self.image = mpimg.imread('Images/bird_nest.png')
 
     # Getter for x
     def getX(self):
@@ -29,8 +30,11 @@ class Home:
         return self.y
 
     def setRandomCoords(self):
-        self.x = random.uniform(0, self.sizeOfGraph)
-        self.y = random.uniform(0, self.sizeOfGraph)
+        slightReduction = self.sizeOfGraph * 0.1
+        self.removeHome()
+        self.x, self.y = random.uniform(0, self.sizeOfGraph - slightReduction), random.uniform(0,
+                                                                                               self.sizeOfGraph
+                                                                                               - slightReduction)
         # Printing the random coords of the home in green
         print("\033[92mHome coords: ", self.x, self.y, "\033[0m")
 
@@ -52,10 +56,11 @@ class Home:
 # Making the target class
 class Target:
     def __init__(self, sizeofGraph):
-        self.x, self.y = randint(0, sizeofGraph), randint(0, sizeofGraph)
-        self.image = mpimg.imread('Images/red_target.png')
         self.sizeOfGraph = sizeofGraph
         self.artist = None
+        self.x, self.y = None, None
+        self.setNewTargetCoords()
+        self.image = mpimg.imread('Images/red_target.png')
 
     # Getter for x
     def getX(self):
@@ -75,7 +80,8 @@ class Target:
         self.x, self.y = random.uniform(0, self.sizeOfGraph - slightReduction), random.uniform(0,
                                                                                                self.sizeOfGraph
                                                                                                - slightReduction)
-        print("New target coords: ", self.x, self.y)
+        # Printing the new target coords in blue
+        print("\033[94mTarget coords: ", self.x, self.y, "\033[0m")
 
     def drawTarget(self, ax):
         # Drawing the target as a function of the size of the graph

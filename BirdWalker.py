@@ -197,7 +197,7 @@ def update(frame, birds, ax, sizeofGraph):
         if bird.sensorZoneCheck():
             # Passing the bird to the AudioManipulator
             # Where the frame acts as the count
-            AudioManipulator.main(bird, count)
+            AudioManipulator.saveManipulatedAudioFile(bird, count)
 
     plt.draw()
     # If not in a sensor zone, the bird will not make a sound

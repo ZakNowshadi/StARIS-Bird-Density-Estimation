@@ -218,11 +218,11 @@ def main(sizeofGraph):
     speedOfBird = 0.5
     species = 'robin'
 
-    bird1 = Bird('bird1', 'Images/robin.png', species, speedOfBird, sizeofGraph)
-
     # Making the list of bird objects
-    numberOfBirds = 3
-    birds = [Bird(f'bird{i}', 'Images/robin.png', 'robin', 0.5, sizeofGraph) for i in range(numberOfBirds)]
+    numberOfBirds = 2
+    # Making a list of birds
+    # Giving each one the name of the species and a number
+    birds = [Bird(species + str(i), 'Images/' + species + '.png', species, 0.5, sizeofGraph) for i in range(numberOfBirds)]
 
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)

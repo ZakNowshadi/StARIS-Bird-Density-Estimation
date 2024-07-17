@@ -18,6 +18,6 @@ def main(bird, count):
     # Filename is in the following format:
     # {species}{count(number of ticks at the point in time, be them in a sensor zone or not)}_{x},{y}.wav
     # The coords of the bird and its species are also included in the file name
-    filename = f"{bird.getName()}_{count}_{bird.getX()},{bird.getY()}.wav"
+    filename = f"{bird.getName()}-{count}_{bird.getX()},{bird.getY()}.wav"
     filePath = manipulatedAudioFolder + '/' + filename
     manipulatedWhistle.export(filePath, format='wav')

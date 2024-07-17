@@ -180,7 +180,7 @@ class Bird:
 
         # Making the probability of going home a function of the distance from home
         # The further the bird is from home, the more likely it is to go home
-        probabilityOfGoingHome = min(1, distanceFromHome / (self.sizeOfGraph * 0.5))
+        probabilityOfGoingHome = min(1, distanceFromHome / (self.sizeOfGraph * 0.5 * 2))
 
         # Moving towards home with a probability that increases as the bird gets further from home
         if random.random() < probabilityOfGoingHome:

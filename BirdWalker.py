@@ -12,98 +12,62 @@ global imageSizeAdjustment
 imageSizeAdjustment = 14
 
 
-# Home class for the bird walker
-class Home:
-    def __init__(self, sizeofGraph):
+# Making a super parent class for all the objects in the graph
+class GraphObject:
+    def __init__(self, sizeofGraph, imagePath=None):
         self.sizeOfGraph = sizeofGraph
-        self.artist = None
         self.x, self.y = None, None
-        self.setRandomCoords()
-        self.image = mpimg.imread('Images/bird_nest.png')
-
-    # Getter for x
-    def getX(self):
-        return self.x
-
-    # Getter for y
-    def getY(self):
-        return self.y
+        self.imagePath = imagePath
+        self.image = mpimg.imread(imagePath) if imagePath else None
+        self.artist = None
 
     def setRandomCoords(self):
         slightReduction = self.sizeOfGraph * 0.1
-        self.removeHome()
+        self.remove()
         self.x, self.y = random.uniform(0, self.sizeOfGraph - slightReduction), random.uniform(0,
                                                                                                self.sizeOfGraph
                                                                                                - slightReduction)
-        # Printing the random coords of the home in green
-        print("\033[92mHome coords: ", self.x, self.y, "\033[0m")
 
-    def drawHome(self, ax):
-        # Drawing the home as a function of the size of the graph
-        extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
-                  self.y + self.sizeOfGraph / imageSizeAdjustment]
-        # To fix the problem of the original bird freezing while another moves
-        if self.artist is not None:
-            self.removeHome()
-        self.artist = ax.imshow(self.image, extent=extent)
+    def draw(self, ax):
+        if self.image is not None and self.x is not None and self.y is not None:
+            extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
+                      self.y + self.sizeOfGraph / imageSizeAdjustment]
+            if self.artist is not None:
+                self.artist.remove()
+            self.artist = ax.imshow(self.image, extent=extent)
 
-    def removeHome(self):
+    # Removing the object
+    def remove(self):
         if self.artist is not None:
             self.artist.remove()
             self.artist = None
 
-
-# Making the target class
-class Target:
-    def __init__(self, sizeofGraph):
-        self.sizeOfGraph = sizeofGraph
-        self.artist = None
-        self.x, self.y = None, None
-        self.setNewTargetCoords()
-        self.image = mpimg.imread('Images/red_target.png')
-
-    # Getter for x
+    # Getters for x and y
     def getX(self):
         return self.x
 
-    # Getter for y
     def getY(self):
         return self.y
 
-    def setNewTargetCoords(self):
-        # Variable to slightly reduce the scope of the possible target coords such that
-        # The target is never on the edge of the graph
-        # This is to prevent the target from being partially off the graph
-        slightReduction = self.sizeOfGraph * 0.1
 
-        self.removeTarget()
-        self.x, self.y = random.uniform(0, self.sizeOfGraph - slightReduction), random.uniform(0,
-                                                                                               self.sizeOfGraph
-                                                                                               - slightReduction)
-        # Printing the new target coords in blue
-        print("\033[94mTarget coords: ", self.x, self.y, "\033[0m")
+# Home class for the bird walker
+class Home(GraphObject):
+    def __init__(self, sizeofGraph):
+        super().__init__(sizeofGraph, 'Images/bird_nest.png')
+        self.setRandomCoords()
 
-    def drawTarget(self, ax):
-        # Drawing the target as a function of the size of the graph
-        extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
-                  self.y + self.sizeOfGraph / imageSizeAdjustment]
-        # To fix the problem of the original bird freezing while another moves
-        if self.artist is not None:
-            self.removeTarget()
-        self.artist = ax.imshow(self.image, extent=extent)
 
-    def removeTarget(self):
-        if self.artist is not None:
-            self.artist.remove()
-            self.artist = None
+# Making the target class
+class Target(GraphObject):
+    def __init__(self, sizeofGraph):
+        super().__init__(sizeofGraph, 'Images/red_target.png')
+        self.setRandomCoords()
 
 
 # Making a bird class
-class Bird:
-    def __init__(self, x, y, imagePath, species, speed, sizeofGraph):
-        self.x = x
-        self.y = y
-
+class Bird(GraphObject):
+    def __init__(self, imagePath, species, speed, sizeofGraph):
+        super().__init__(sizeofGraph, imagePath)
         self.image = mpimg.imread(imagePath)
         self.species = species
         # Will be null if in no sensor zone
@@ -112,33 +76,14 @@ class Bird:
         self.currentSensorZone = None
         self.distanceFromSensor = 0
         self.speed = speed
-        # The artist object for the bird
-        self.artist = None
         # Making the initial target object
         self.targetObject = Target(sizeofGraph)
         self.homeObject = Home(sizeofGraph)
-        self.sizeOfGraph = sizeofGraph
-
-    # Getter for x
-    def getX(self):
-        return self.x
-
-    # Getter for y
-    def getY(self):
-        return self.y
+        self.setRandomCoords()
 
     # Getter for species
     def getSpecies(self):
         return self.species
-
-    def draw(self, ax):
-        # Drawing the bird as a function of the size of the graph
-        extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
-                  self.y + self.sizeOfGraph / imageSizeAdjustment]
-        # To fix the problem of the original bird freezing while another moves
-        if self.artist is not None:
-            self.artist.remove()
-        self.artist = ax.imshow(self.image, extent=extent)
 
     def sensorZoneCheck(self):
         # Checking if the bird is in a sensor zone
@@ -210,9 +155,9 @@ class Bird:
         # Check if near the target point to generate a new target
         # If the bird is within 1 unit of the target, generate a new target
         if abs(self.x - self.targetObject.getX()) < 1 and abs(self.y - self.targetObject.getY()) < 1:
-            self.targetObject.setNewTargetCoords()
+            self.targetObject.setRandomCoords()
             self.targetObject.artist = None
-            self.targetObject.drawTarget(plt.gca())
+            self.targetObject.draw(plt.gca())
             # The location of the home is also changed when the target is reached
             self.homeObject.setRandomCoords()
 
@@ -234,9 +179,9 @@ def update(frame, bird, ax, sizeofGraph):
     print("\n-----------------------")
     print("Bird is at: ", bird.getX(), bird.getY())
     # Re-draw the target each time the bird moves
-    bird.targetObject.drawTarget(ax)
+    bird.targetObject.draw(ax)
     # Re-draw the home each time the bird moves
-    bird.homeObject.drawHome(ax)
+    bird.homeObject.draw(ax)
     bird.draw(ax)
     if bird.sensorZoneCheck():
         # Passing the bird to the AudioManipulator
@@ -260,10 +205,8 @@ def main(sizeofGraph):
     # Making a new bird object
     speedOfBird = 0.5
     species = 'robin'
-    # Starting the bird at random coords between 0 and the size of the graph
-    startingX, startingY = randint(0, sizeofGraph), randint(0, sizeofGraph)
 
-    bird1 = Bird(startingX, startingY, 'Images/robin.png', species, speedOfBird, sizeofGraph)
+    bird1 = Bird('Images/robin.png', species, speedOfBird, sizeofGraph)
 
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)

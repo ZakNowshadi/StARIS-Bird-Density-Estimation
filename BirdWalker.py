@@ -169,29 +169,43 @@ class Bird:
     # Returns a positive number (the distance) if the point is within the sensor zone
     # or -1 if it is not
     def ifPointIsInsideSensorZoneReturnTheDistanceToTheSensorFromThePoint(self, x, y, sensorZone):
-        distance = ((x - sensorZone.getX()) ** 2 + (y - sensorZone.getY()) ** 2) ** 0.5
+        distance = distanceBetweenTwoPoints(x, y, sensorZone.getX(), sensorZone.getY())
         if distance <= sensorZone.radius:
             return distance
         return -1
 
     def updatePosition(self, sizeofGraph):
+        # Finding the distance the bird is from home
+        distanceFromHome = distanceBetweenTwoPoints(self.x, self.y, self.homeObject.getX(), self.homeObject.getY())
+
+        # Making the probability of going home a function of the distance from home
+        # The further the bird is from home, the more likely it is to go home
+        probabilityOfGoingHome = min(1, distanceFromHome / (self.sizeOfGraph * 0.5))
+
+        # Moving towards home with a probability that increases as the bird gets further from home
+        if random.random() < probabilityOfGoingHome:
+            self.moveTowardsPoint(self.homeObject.getX(), self.homeObject.getY())
+        else:
+            self.moveTowardsPoint(self.targetObject.getX(), self.targetObject.getY())
+
+        # Wrapping around the graph
+        self.x %= sizeofGraph
+        self.y %= sizeofGraph
+
+    def moveTowardsPoint(self, targetX, targetY):
         randomLowerBound = 0.5
         randomUpperBound = 1
         # if the bird is to the left of the target, move right
-        if self.x < self.targetObject.getX():
+        if self.x < targetX:
             self.x += self.speed * random.uniform(randomLowerBound, randomUpperBound)
-        elif self.x > self.targetObject.getX():
+        elif self.x > targetX:
             self.x -= self.speed * random.uniform(randomLowerBound, randomUpperBound)
 
         # if the bird is below the target, move up
-        if self.y < self.targetObject.getY():
+        if self.y < targetY:
             self.y += self.speed * random.uniform(randomLowerBound, randomUpperBound)
-        elif self.y > self.targetObject.getY():
+        elif self.y > targetY:
             self.y -= self.speed * random.uniform(randomLowerBound, randomUpperBound)
-
-        # Wrap around logic remains unchanged
-        self.x %= sizeofGraph
-        self.y %= sizeofGraph
 
         # Check if near the target point to generate a new target
         # If the bird is within 1 unit of the target, generate a new target
@@ -205,6 +219,10 @@ class Bird:
 
 global count
 count = 0
+
+
+def distanceBetweenTwoPoints(x1, y1, x2, y2):
+    return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 
 
 def update(frame, bird, ax, sizeofGraph):

@@ -4,7 +4,6 @@ from matplotlib.animation import FuncAnimation
 import AudioManipulator
 import BaseGraphGenerator
 import random
-from random import randint
 
 # The size of the image will be divided by this number to make it fit the graph
 # Such that the image will be the same relative size no matter the size of the graph
@@ -14,6 +13,8 @@ imageSizeAdjustment = 14
 
 # Making a super parent class for all the objects in the graph
 class GraphObject:
+    global imageSizeAdjustment
+
     def __init__(self, sizeofGraph, imagePath=None):
         self.sizeOfGraph = sizeofGraph
         self.x, self.y = None, None
@@ -66,9 +67,10 @@ class Target(GraphObject):
 
 # Making a bird class
 class Bird(GraphObject):
-    def __init__(self, imagePath, species, speed, sizeofGraph):
+    def __init__(self, name, imagePath, species, speed, sizeofGraph):
         super().__init__(sizeofGraph, imagePath)
         self.image = mpimg.imread(imagePath)
+        self.name = name
         self.species = species
         # Will be null if in no sensor zone
         # Needs to be know so know which sensor to play the sound to as
@@ -79,11 +81,17 @@ class Bird(GraphObject):
         # Making the initial target object
         self.targetObject = Target(sizeofGraph)
         self.homeObject = Home(sizeofGraph)
+        # TODO: Implement the currentlyInFlight mechanic such that audio is only recorded when the bird is in flight
+        #  or not depending on the species
+        self.currentlyInFlight = False
         self.setRandomCoords()
 
-    # Getter for species
+    # Getter for species and name
     def getSpecies(self):
         return self.species
+
+    def getName(self):
+        return self.name
 
     def sensorZoneCheck(self):
         # Checking if the bird is in a sensor zone
@@ -100,15 +108,17 @@ class Bird(GraphObject):
             if distance != -1:
                 self.currentSensorZone = sensorZone
                 self.distanceFromSensor = distance
-                print("Bird is in a sensor zone")
+                # Printing that the bird is in a sensor zone in green text
+                print("\033[92m" + self.name + " is in a sensor zone" + "\033[0m")
                 print("Sensor zone coords: ", sensorZone.getX(), sensorZone.getY())
                 print("Distance from sensor: ", distance)
                 return True
 
+        # If the bird is not in any sensor zone
         self.currentSensorZone = None
         self.distanceFromSensor = 0
-        # Printing that the bird is not in a sensor zone in a red highlight background
-        print("\033[91mBird is not in a sensor zone\033[0m")
+        # Printing that the bird is not in a sensor zone in a red text
+        print("\033[91m" + self.name + " is not in a sensor zone" + "\033[0m")
         return False
 
     # Returns a positive number (the distance) if the point is within the sensor zone
@@ -177,7 +187,7 @@ def update(frame, bird, ax, sizeofGraph):
     bird.updatePosition(sizeofGraph)
     # Printing current coords of the bird
     print("\n-----------------------")
-    print("Bird is at: ", bird.getX(), bird.getY())
+    print(bird.getName() + " is at: ", bird.getX(), bird.getY())
     # Re-draw the target each time the bird moves
     bird.targetObject.draw(ax)
     # Re-draw the home each time the bird moves
@@ -206,12 +216,12 @@ def main(sizeofGraph):
     speedOfBird = 0.5
     species = 'robin'
 
-    bird1 = Bird('Images/robin.png', species, speedOfBird, sizeofGraph)
+    bird1 = Bird('bird1', 'Images/robin.png', species, speedOfBird, sizeofGraph)
 
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)
 
-    # Drawing the bird
+    # Drawing the bird(s)
     bird1.draw(ax)
 
     plt.draw()

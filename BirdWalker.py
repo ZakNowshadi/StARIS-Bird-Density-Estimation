@@ -221,7 +221,7 @@ def main(sizeofGraph):
     bird1 = Bird('bird1', 'Images/robin.png', species, speedOfBird, sizeofGraph)
 
     # Making the list of bird objects
-    numberOfBirds = 5
+    numberOfBirds = 3
     birds = [Bird(f'bird{i}', 'Images/robin.png', 'robin', 0.5, sizeofGraph) for i in range(numberOfBirds)]
 
     # Drawing the static background only once

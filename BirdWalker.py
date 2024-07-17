@@ -180,23 +180,25 @@ def distanceBetweenTwoPoints(x1, y1, x2, y2):
     return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 
 
-def update(frame, bird, ax, sizeofGraph):
+def update(frame, birds, ax, sizeofGraph):
     # Incrementing the coords of the bird
     global count
 
-    bird.updatePosition(sizeofGraph)
-    # Printing current coords of the bird
-    print("\n-----------------------")
-    print(bird.getName() + " is at: ", bird.getX(), bird.getY())
-    # Re-draw the target each time the bird moves
-    bird.targetObject.draw(ax)
-    # Re-draw the home each time the bird moves
-    bird.homeObject.draw(ax)
-    bird.draw(ax)
-    if bird.sensorZoneCheck():
-        # Passing the bird to the AudioManipulator
-        # Where the frame acts as the count
-        AudioManipulator.main(bird, count)
+    for bird in birds:
+        bird.updatePosition(sizeofGraph)
+        # Printing current coords of the bird
+        print("\n-----------------------")
+        print(bird.getName() + " is at: ", bird.getX(), bird.getY())
+        # Re-draw the target each time the bird moves
+        bird.targetObject.draw(ax)
+        # Re-draw the home each time the bird moves
+        bird.homeObject.draw(ax)
+        bird.draw(ax)
+        if bird.sensorZoneCheck():
+            # Passing the bird to the AudioManipulator
+            # Where the frame acts as the count
+            AudioManipulator.main(bird, count)
+
     plt.draw()
     # If not in a sensor zone, the bird will not make a sound
     # Incrementing the count
@@ -218,17 +220,22 @@ def main(sizeofGraph):
 
     bird1 = Bird('bird1', 'Images/robin.png', species, speedOfBird, sizeofGraph)
 
+    # Making the list of bird objects
+    numberOfBirds = 5
+    birds = [Bird(f'bird{i}', 'Images/robin.png', 'robin', 0.5, sizeofGraph) for i in range(numberOfBirds)]
+
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)
 
     # Drawing the bird(s)
-    bird1.draw(ax)
+    for bird in birds:
+        bird.draw(ax)
 
     plt.draw()
     # Short pause to allow for the new bird to be accurately drawn
     plt.pause(0.01)
     # Running the animation - ensuring that the garbage collector does not delete the animation object
-    birdAnimation = FuncAnimation(fig, update, fargs=(bird1, ax, sizeofGraph), frames=range(sizeofGraph * 20),
+    birdAnimation = FuncAnimation(fig, update, fargs=(birds, ax, sizeofGraph), frames=range(sizeofGraph * 20),
                                   blit=True, interval=50)
 
     plt.show()

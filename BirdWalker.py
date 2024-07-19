@@ -218,14 +218,14 @@ def main(sizeofGraph):
     # The bird walker will start in the bottom left corner for initial test purposes
     # Making a new bird object
     speedOfBird = 0.5
-    species = 'robin'
+    speciesList = ['robin', 'blackbird']
+    numberOfBirdsPerSpecies = 1
+    birds = []
 
-    # Making the list of bird objects
-    numberOfBirds = 2
-    # Making a list of birds
-    # Giving each one the name of the species and a number
-    robinImageFilePath = 'Images/Species' + species + '.png'
-    birds = [Bird(species + str(i), 'Images/Species/' + species + '.png', species, 0.5, sizeofGraph) for i in range(numberOfBirds)]
+    for species in speciesList:
+        birdImageFilePath = 'Images/Species/' + species + '.png'
+        birds += [Bird(species + str(i), birdImageFilePath, species, speedOfBird, sizeofGraph) for i in
+                  range(numberOfBirdsPerSpecies)]
 
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)

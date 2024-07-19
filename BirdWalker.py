@@ -54,14 +54,16 @@ class GraphObject:
 # Home class for the bird walker
 class Home(GraphObject):
     def __init__(self, sizeofGraph):
-        super().__init__(sizeofGraph, 'Images/bird_nest.png')
+        homeImageFilePath = 'Images/GraphItems/bird_nest.png'
+        super().__init__(sizeofGraph, homeImageFilePath)
         self.setRandomCoords()
 
 
 # Making the target class
 class Target(GraphObject):
     def __init__(self, sizeofGraph):
-        super().__init__(sizeofGraph, 'Images/red_target.png')
+        targetImageFilePath = 'Images/GraphItems/red_target.png'
+        super().__init__(sizeofGraph, targetImageFilePath)
         self.setRandomCoords()
 
 
@@ -222,7 +224,8 @@ def main(sizeofGraph):
     numberOfBirds = 2
     # Making a list of birds
     # Giving each one the name of the species and a number
-    birds = [Bird(species + str(i), 'Images/' + species + '.png', species, 0.5, sizeofGraph) for i in range(numberOfBirds)]
+    robinImageFilePath = 'Images/Species' + species + '.png'
+    birds = [Bird(species + str(i), 'Images/Species/' + species + '.png', species, 0.5, sizeofGraph) for i in range(numberOfBirds)]
 
     # Drawing the static background only once
     BaseGraphGenerator.main(sizeofGraph)

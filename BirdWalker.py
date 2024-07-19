@@ -5,15 +5,13 @@ import AudioManipulator
 import BaseGraphGenerator
 import random
 
+
 # The size of the image will be divided by this number to make it fit the graph
 # Such that the image will be the same relative size no matter the size of the graph
-global imageSizeAdjustment
-imageSizeAdjustment = 14
 
 
 # Making a super parent class for all the objects in the graph
 class GraphObject:
-    global imageSizeAdjustment
 
     def __init__(self, sizeofGraph, imagePath=None):
         self.sizeOfGraph = sizeofGraph
@@ -30,6 +28,7 @@ class GraphObject:
                                                                                                - slightReduction)
 
     def draw(self, ax):
+        imageSizeAdjustment = 14
         if self.image is not None and self.x is not None and self.y is not None:
             extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
                       self.y + self.sizeOfGraph / imageSizeAdjustment]

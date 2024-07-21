@@ -6,6 +6,7 @@ from matplotlib.animation import FuncAnimation
 import AudioManipulator
 import BaseGraphGenerator
 import random
+import globalConstants
 
 
 # The size of the image will be divided by this number to make it fit the graph
@@ -221,13 +222,13 @@ def main(sizeofGraph):
     speedOfBird = 0.5
     # Making the list of species by looking into the Images/Species folder and getting the names of the files
     # excluding the .png
-    speciesFolder = 'Images/Species'
+    speciesFolder = globalConstants.SPECIES_IMAGES_FOLDER
     # Checking the species folder exists and is populated
     assert os.path.exists(speciesFolder), 'The species folder does not exist or is empty'
-    OriginalAudioFilesFolder = 'Audio/OriginalAudioFiles'
+    OriginalAudioFilesFolder = globalConstants.ORIGINAL_AUDIO_FOLDER
     assert os.path.exists(OriginalAudioFilesFolder), 'The OriginalAudioFiles folder does not exist or is empty'
     speciesList = [species.split('.')[0] for species in os.listdir(speciesFolder)]
-    numberOfBirdsPerSpecies = 1
+    numberOfBirdsPerSpecies = 2
     birds = []
 
     # Making sure the number of files is the same in both the OriginalAudioFiles and the Species folder

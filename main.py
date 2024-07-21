@@ -14,4 +14,17 @@ if os.path.exists(GlobalConstants.MANIPULATED_AUDIO_FOLDER):
 # Making a new manipulated audio files folder
 os.makedirs(GlobalConstants.MANIPULATED_AUDIO_FOLDER)
 
+# Asking the user if they would like to have the graph drawn to represent what is happening
+
+while True:
+    drawGraph = input("Would you like to draw the graph? (y/n): ")
+    if drawGraph == 'y' or drawGraph == 'Y':
+        drawGraph = True
+        break
+    elif drawGraph == 'n' or drawGraph == 'N':
+        drawGraph = False
+        break
+    else:
+        print("Invalid input - please try again")
+
 BirdWalker.main(maxSize)

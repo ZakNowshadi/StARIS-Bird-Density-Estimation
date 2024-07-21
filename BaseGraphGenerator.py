@@ -17,6 +17,7 @@ class SensorZone:
         # Adding the sensor into the R-Tree
         # Making a bounding box around the sensor
         # With the distance from the sensor to the edge of the box being the radius of the sensor
+        # In effect the true sensor zone circle is contained within the box being created here
         sensorZoneIndex.insert(len(SensorZone.instances) - 1,
                                (self.x - self.radius, self.y - self.radius, self.x + self.radius, self.y + self.radius))
 

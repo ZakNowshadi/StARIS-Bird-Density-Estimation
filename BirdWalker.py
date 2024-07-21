@@ -99,7 +99,6 @@ class Bird(GraphObject):
 
     def sensorZoneCheck(self):
         # Checking if the bird is in a sensor zone
-
         birdPoint = (self.x, self.y, self.x, self.y)
         # Getting the index of the sensor zone that the bird is in
         possibleZones = list(BaseGraphGenerator.sensorZoneIndex.intersection(birdPoint))
@@ -108,7 +107,7 @@ class Bird(GraphObject):
             sensorZone = BaseGraphGenerator.SensorZone.instances[zoneID]
             distance = self.ifPointIsInsideSensorZoneReturnTheDistanceToTheSensorFromThePoint(self.x, self.y,
                                                                                               sensorZone)
-            # If the distance is not -1, the bird is in a sensor zone
+            # If the distance is not -1, the bird is actually inside a true circular sensor zone
             if distance != -1:
                 self.currentSensorZone = sensorZone
                 self.distanceFromSensor = distance

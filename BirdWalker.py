@@ -1,3 +1,5 @@
+import os
+
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.animation import FuncAnimation
@@ -217,8 +219,10 @@ def main(sizeofGraph):
     # The bird walker will start in the bottom left corner for initial test purposes
     # Making a new bird object
     speedOfBird = 0.5
-    speciesList = ['robin', 'blackbird']
-    numberOfBirdsPerSpecies = 1
+    # Making the list of species by looking into the Images/Species folder and getting the names of the files
+    # excluding the .png
+    speciesList = [species.split('.')[0] for species in os.listdir('Images/Species')]
+    numberOfBirdsPerSpecies = 2
     birds = []
 
     for species in speciesList:

@@ -221,12 +221,24 @@ def main(sizeofGraph):
     speedOfBird = 0.5
     # Making the list of species by looking into the Images/Species folder and getting the names of the files
     # excluding the .png
-    speciesList = [species.split('.')[0] for species in os.listdir('Images/Species')]
-    numberOfBirdsPerSpecies = 2
+    speciesFolder = 'Images/Species'
+    # Checking the species folder exists and is populated
+    assert os.path.exists(speciesFolder), 'The species folder does not exist or is empty'
+    OriginalAudioFilesFolder = 'Audio/OriginalAudioFiles'
+    assert os.path.exists(OriginalAudioFilesFolder), 'The OriginalAudioFiles folder does not exist or is empty'
+    speciesList = [species.split('.')[0] for species in os.listdir(speciesFolder)]
+    numberOfBirdsPerSpecies = 1
     birds = []
 
+    # Making sure the number of files is the same in both the OriginalAudioFiles and the Species folder
+    numberOfFilesInOriginalAudioFiles = len(os.listdir(OriginalAudioFilesFolder))
+    numberOfFilesInSpeciesFolder = len(os.listdir(speciesFolder))
+    assert numberOfFilesInOriginalAudioFiles == numberOfFilesInSpeciesFolder, 'The number of files in the ' \
+                                                                              'OriginalAudioFiles folder and the ' \
+                                                                              'Species folder are not the same. ' \
+
     for species in speciesList:
-        birdImageFilePath = 'Images/Species/' + species + '.png'
+        birdImageFilePath = speciesFolder + '/' + species + '.png'
         birds += [Bird(species + str(i), birdImageFilePath, species, speedOfBird, sizeofGraph) for i in
                   range(numberOfBirdsPerSpecies)]
 

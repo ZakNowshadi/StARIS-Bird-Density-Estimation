@@ -4,7 +4,8 @@ from pydub import AudioSegment
 
 def saveManipulatedAudioFile(bird, count):
     # Base folder
-    manipulatedAudioFolder = 'ManipulatedAudioFiles'
+    manipulatedAudioFolder = 'Audio/ManipulatedAudioFiles'
+    originalAudioFolder = 'Audio/OriginalAudioFiles'
     speciesFolder = manipulatedAudioFolder + '/' + bird.getSpecies()
     # Checking if the species folder exists
     if not os.path.exists(speciesFolder):
@@ -19,7 +20,7 @@ def saveManipulatedAudioFile(bird, count):
     fileName = f"{count}_{bird.getX()},{bird.getY()}.wav"
     filePath = birdFolder + '/' + fileName
 
-    originalAudio = AudioSegment.from_file('OriginalAudioFiles/' + bird.getSpecies() + '.wav')
+    originalAudio = AudioSegment.from_file(originalAudioFolder + '/' + bird.getSpecies() + '.wav')
     distance = bird.distanceFromSensor
     # Manipulating the audio file
     # Using: https://stackoverflow.com/questions/13329617/change-the-volume-of-a-wav-file-in-python

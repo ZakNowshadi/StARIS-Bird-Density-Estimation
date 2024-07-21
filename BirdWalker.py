@@ -227,7 +227,7 @@ def main(sizeofGraph):
     OriginalAudioFilesFolder = GlobalConstants.ORIGINAL_AUDIO_FOLDER
     assert os.path.exists(OriginalAudioFilesFolder), 'The OriginalAudioFiles folder does not exist or is empty'
     speciesList = [species.split('.')[0] for species in os.listdir(speciesFolder)]
-    numberOfBirdsPerSpecies = 2
+    numberOfBirdsPerSpecies = 1
     birds = []
 
     # Making sure the number of files is the same in both the OriginalAudioFiles and the Species folder
@@ -243,6 +243,7 @@ def main(sizeofGraph):
                   range(numberOfBirdsPerSpecies)]
 
     # Drawing the static background only once
+    # TODO: Add an option to make the script run without making the graph such that it can go much faster
     BaseGraphGenerator.main(sizeofGraph)
 
     # Drawing the bird(s)

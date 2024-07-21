@@ -2,16 +2,16 @@
 import BirdWalker
 import shutil
 import os
-import globalConstants
+import GlobalConstants
 
 # Defining the size of the graph
 maxSize = 20
 
 # Checking if the manipulated audio files folder exists
-if os.path.exists(globalConstants.MANIPULATED_AUDIO_FOLDER):
+if os.path.exists(GlobalConstants.MANIPULATED_AUDIO_FOLDER):
     # If it does, delete it
-    shutil.rmtree(globalConstants.MANIPULATED_AUDIO_FOLDER)
+    shutil.rmtree(GlobalConstants.MANIPULATED_AUDIO_FOLDER)
 # Making a new manipulated audio files folder
-os.makedirs(globalConstants.MANIPULATED_AUDIO_FOLDER)
+os.makedirs(GlobalConstants.MANIPULATED_AUDIO_FOLDER)
 
 BirdWalker.main(maxSize)

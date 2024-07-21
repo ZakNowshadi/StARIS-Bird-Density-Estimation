@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation
 import AudioManipulator
 import BaseGraphGenerator
 import random
-import globalConstants
+import GlobalConstants
 
 
 # The size of the image will be divided by this number to make it fit the graph
@@ -56,7 +56,7 @@ class GraphObject:
 # Home class for the bird walker
 class Home(GraphObject):
     def __init__(self, sizeofGraph):
-        homeImageFilePath = 'Images/GraphItems/bird_nest.png'
+        homeImageFilePath = GlobalConstants.HOME_IMAGE_FILE
         super().__init__(sizeofGraph, homeImageFilePath)
         self.setRandomCoords()
 
@@ -64,7 +64,7 @@ class Home(GraphObject):
 # Making the target class
 class Target(GraphObject):
     def __init__(self, sizeofGraph):
-        targetImageFilePath = 'Images/GraphItems/red_target.png'
+        targetImageFilePath = GlobalConstants.TARGET_IMAGE_FILE
         super().__init__(sizeofGraph, targetImageFilePath)
         self.setRandomCoords()
 
@@ -222,10 +222,10 @@ def main(sizeofGraph):
     speedOfBird = 0.5
     # Making the list of species by looking into the Images/Species folder and getting the names of the files
     # excluding the .png
-    speciesFolder = globalConstants.SPECIES_IMAGES_FOLDER
+    speciesFolder = GlobalConstants.SPECIES_IMAGES_FOLDER
     # Checking the species folder exists and is populated
     assert os.path.exists(speciesFolder), 'The species folder does not exist or is empty'
-    OriginalAudioFilesFolder = globalConstants.ORIGINAL_AUDIO_FOLDER
+    OriginalAudioFilesFolder = GlobalConstants.ORIGINAL_AUDIO_FOLDER
     assert os.path.exists(OriginalAudioFilesFolder), 'The OriginalAudioFiles folder does not exist or is empty'
     speciesList = [species.split('.')[0] for species in os.listdir(speciesFolder)]
     numberOfBirdsPerSpecies = 2

@@ -1,12 +1,12 @@
 import os
 from pydub import AudioSegment
-import globalConstants
+import GlobalConstants
 
 
 def saveManipulatedAudioFile(bird, count):
     # Base folder
-    manipulatedAudioFolder = globalConstants.MANIPULATED_AUDIO_FOLDER
-    originalAudioFolder = globalConstants.ORIGINAL_AUDIO_FOLDER
+    manipulatedAudioFolder = GlobalConstants.MANIPULATED_AUDIO_FOLDER
+    originalAudioFolder = GlobalConstants.ORIGINAL_AUDIO_FOLDER
     speciesFolder = manipulatedAudioFolder + '/' + bird.getSpecies()
     # Checking if the species folder exists
     if not os.path.exists(speciesFolder):

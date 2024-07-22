@@ -1,3 +1,5 @@
+# Tried to ensure all the hardcoded paths are in one place such that any changes (if needed) can be done easily
+# as all the places where these paths are used in the codebase are dependent on these global variables below
 
 global MANIPULATED_AUDIO_FOLDER
 MANIPULATED_AUDIO_FOLDER = 'Audio/ManipulatedAudioFiles'

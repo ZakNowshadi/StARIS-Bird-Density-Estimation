@@ -86,7 +86,7 @@ class Bird(GraphObject):
         self.targetObject = Target(sizeofGraph)
         self.homeObject = Home(sizeofGraph)
         # TODO: Implement the currentlyInFlight mechanic such that audio is only recorded when the bird is in flight
-        #  or not depending on the species
+        #  or not depending on the species - which wil vary species by species
         self.currentlyInFlight = False
         self.setRandomCoords()
 

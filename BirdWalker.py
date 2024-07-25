@@ -249,7 +249,6 @@ def main(sizeofGraph, drawGraph):
                   range(numberOfBirdsPerSpecies)]
 
     # Drawing the static background only once
-    # TODO: Add an option to make the script run without making the graph such that it can go much faster
     BaseGraphGenerator.main(sizeofGraph, drawGraph)
 
     # Running the program not using any matplotlib graphics

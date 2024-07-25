@@ -35,7 +35,7 @@ class GraphObject:
         if self.image is not None and self.x is not None and self.y is not None:
             extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
                       self.y + self.sizeOfGraph / imageSizeAdjustment]
-            if self.artist is not None:
+            if self.artist:
                 self.artist.remove()
             self.artist = ax.imshow(self.image, extent=extent)
 
@@ -90,6 +90,8 @@ class Bird(GraphObject):
         self.currentlyInFlight = False
         self.setRandomCoords()
         self.timeAwayFromHome = 0
+        self.lineToHome = None
+        self.lineToTarget = None
 
     # Getter for species and name
     def getSpecies(self):
@@ -202,11 +204,25 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
         print("\n-----------------------")
         print(bird.getName() + " is at: ", bird.getX(), bird.getY())
         if drawGraph:
+            # Removing thw existing lines
+            if bird.lineToHome:
+                bird.lineToHome.remove()
+            if bird.lineToTarget:
+                bird.lineToTarget.remove()
+
             # Re-draw the target each time the bird moves
             bird.targetObject.draw(ax)
             # Re-draw the home each time the bird moves
             bird.homeObject.draw(ax)
             bird.draw(ax)
+
+            # Drawing a line from the bird to the home
+            # Draw a green line from bird to home and store the reference
+            bird.lineToHome, = ax.plot([bird.getX(), bird.homeObject.getX()], [bird.getY(), bird.homeObject.getY()], 'g-')
+            # Draw a red line from bird to target and store the reference
+            bird.lineToTarget, = ax.plot([bird.getX(), bird.targetObject.getX()], [bird.getY(), bird.targetObject.getY()], 'r-')
+
+
         if bird.sensorZoneCheck():
             # Passing the bird to the AudioManipulator
             # Where the frame acts as the count
@@ -248,8 +264,10 @@ def main(sizeofGraph, drawGraph):
         birds += [Bird(species + str(i), birdImageFilePath, species, speedOfBird, sizeofGraph) for i in
                   range(numberOfBirdsPerSpecies)]
 
-    # Drawing the static background only once
-    BaseGraphGenerator.main(sizeofGraph, drawGraph)
+    # Drawing the static background only once if needed otherwise just setting up the sensor zone
+    # Setting up the plot
+    fig, ax = plt.subplots()
+    BaseGraphGenerator.main(sizeofGraph, ax, drawGraph)
 
     # Running the program not using any matplotlib graphics
     limiter = 20
@@ -258,8 +276,7 @@ def main(sizeofGraph, drawGraph):
             update(i, birds, None, sizeofGraph, drawGraph)
 
     if drawGraph:
-        # Setting up the plot
-        fig, ax = plt.subplots()
+
         ax.set_xlim(0, sizeofGraph)
         ax.set_ylim(0, sizeofGraph)
 

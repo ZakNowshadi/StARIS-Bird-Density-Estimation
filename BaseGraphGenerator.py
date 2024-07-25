@@ -37,15 +37,16 @@ class SensorZone:
     def setY(self, y):
         self.y = y
 
-    def drawSensorZone(self):
+    def drawSensorZone(self, ax):
         # Plotting the sensor itself
         plt.plot(self.x, self.y, 'mp')
         # Draw a green of circle around each sensor
         circle = plt.Circle((self.x, self.y), self.radius, color='g', fill=False)
-        plt.gca().add_artist(circle)
+        #plt.gca().add_artist(circle)
+        ax.add_artist(circle)
 
 
-def main(maxSize, drawGraph):
+def main(maxSize, ax, drawGraph):
     # Making the base graph
 
     X = maxSize
@@ -66,8 +67,8 @@ def main(maxSize, drawGraph):
         # Drawing each sensor zone's radius
         # Draw a green of circle around each sensor
 
-        centreSensor.drawSensorZone()
-        upperLeftSensor.drawSensorZone()
-        upperRightSensor.drawSensorZone()
-        lowerLeftSensor.drawSensorZone()
-        lowerRightSensor.drawSensorZone()
+        centreSensor.drawSensorZone(ax)
+        upperLeftSensor.drawSensorZone(ax)
+        upperRightSensor.drawSensorZone(ax)
+        lowerLeftSensor.drawSensorZone(ax)
+        lowerRightSensor.drawSensorZone(ax)

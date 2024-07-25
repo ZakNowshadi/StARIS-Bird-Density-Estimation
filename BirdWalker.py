@@ -149,7 +149,7 @@ class Bird(GraphObject):
 
         # Making the probability of going home a function of the distance and time from home
         # The further the bird is from home, the more likely it is to go home
-        probabilityOfGoingHome = min(1, (distanceFromHome / (self.sizeOfGraph * 0.5 * 2)) + timeFactor)
+        probabilityOfGoingHome = min(1, (distanceFromHome / (self.sizeOfGraph * 0.5)) + timeFactor)
 
         # Moving towards home with a probability that increases as the bird gets further from home
         if random.random() < probabilityOfGoingHome:
@@ -182,9 +182,11 @@ class Bird(GraphObject):
             self.targetObject.setRandomCoords()
             self.targetObject.artist = None
             self.targetObject.draw(plt.gca())
-            # The location of the home is also changed when the target is reached
-            self.homeObject.setRandomCoords()
-            # Setting the time away from home to 0 as it has reached home
+            # # The location of the home is also changed when the target is reached
+            # self.homeObject.setRandomCoords()
+
+        # Check is in the vicinity of its home
+        if abs(self.x - self.homeObject.getX()) < 1 and abs(self.y - self.homeObject.getY()) < 1:
             self.timeAwayFromHome = 0
 
 
@@ -205,6 +207,7 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
         # Printing current coords of the bird
         print("\n-----------------------")
         print(bird.getName() + " is at: ", bird.getX(), bird.getY())
+        print(bird.getName() + " has spent " + str(bird.timeAwayFromHome) + " ticks away from home")
         if drawGraph:
             # Removing thw existing lines
             if bird.lineToHome:

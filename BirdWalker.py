@@ -33,8 +33,10 @@ class GraphObject:
     def draw(self, ax):
         imageSizeAdjustment = 14
         if self.image is not None and self.x is not None and self.y is not None:
-            extent = [self.x, self.x + self.sizeOfGraph / imageSizeAdjustment, self.y,
-                      self.y + self.sizeOfGraph / imageSizeAdjustment]
+            imageWidth = self.sizeOfGraph / imageSizeAdjustment
+            imageHeight = self.sizeOfGraph / imageSizeAdjustment
+            extent = [self.x - imageWidth / 2, self.x + imageWidth / 2,
+                      self.y - imageHeight / 2, self.y + imageHeight / 2]
             if self.artist:
                 self.artist.remove()
             self.artist = ax.imshow(self.image, extent=extent)

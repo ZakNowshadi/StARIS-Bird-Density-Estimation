@@ -30,4 +30,4 @@ while True:
     else:
         print("Invalid input - please try again")
 
-BirdWalker.main(maxSize)
+BirdWalker.main(maxSize, drawGraph)

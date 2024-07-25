@@ -89,6 +89,7 @@ class Bird(GraphObject):
         #  or not depending on the species - which wil vary species by species
         self.currentlyInFlight = False
         self.setRandomCoords()
+        self.timeAwayFromHome = 0
 
     # Getter for species and name
     def getSpecies(self):
@@ -136,9 +137,15 @@ class Bird(GraphObject):
         # Finding the distance the bird is from home
         distanceFromHome = distanceBetweenTwoPoints(self.x, self.y, self.homeObject.getX(), self.homeObject.getY())
 
-        # Making the probability of going home a function of the distance from home
+        # Existing logic to calculate distanceFromHome
+        self.timeAwayFromHome += 1  # Increment time away from home
+
+        # Adjusting probabilityOfGoingHome to factor in timeAwayFromHome
+        timeFactor = min(1, self.timeAwayFromHome / 100)
+
+        # Making the probability of going home a function of the distance and time from home
         # The further the bird is from home, the more likely it is to go home
-        probabilityOfGoingHome = min(1, distanceFromHome / (self.sizeOfGraph * 0.5 * 2))
+        probabilityOfGoingHome = min(1, (distanceFromHome / (self.sizeOfGraph * 0.5 * 2)) + timeFactor)
 
         # Moving towards home with a probability that increases as the bird gets further from home
         if random.random() < probabilityOfGoingHome:
@@ -173,6 +180,8 @@ class Bird(GraphObject):
             self.targetObject.draw(plt.gca())
             # The location of the home is also changed when the target is reached
             self.homeObject.setRandomCoords()
+            # Setting the time away from home to 0 as it has reached home
+            self.timeAwayFromHome = 0
 
 
 global count
@@ -183,7 +192,7 @@ def distanceBetweenTwoPoints(x1, y1, x2, y2):
     return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 
 
-def update(frame, birds, ax, sizeofGraph):
+def update(frame, birds, ax, sizeofGraph, drawGraph):
     # Incrementing the coords of the bird
     global count
 
@@ -192,17 +201,19 @@ def update(frame, birds, ax, sizeofGraph):
         # Printing current coords of the bird
         print("\n-----------------------")
         print(bird.getName() + " is at: ", bird.getX(), bird.getY())
-        # Re-draw the target each time the bird moves
-        bird.targetObject.draw(ax)
-        # Re-draw the home each time the bird moves
-        bird.homeObject.draw(ax)
-        bird.draw(ax)
+        if drawGraph:
+            # Re-draw the target each time the bird moves
+            bird.targetObject.draw(ax)
+            # Re-draw the home each time the bird moves
+            bird.homeObject.draw(ax)
+            bird.draw(ax)
         if bird.sensorZoneCheck():
             # Passing the bird to the AudioManipulator
             # Where the frame acts as the count
             AudioManipulator.saveManipulatedAudioFile(bird, count)
 
-    plt.draw()
+    if drawGraph:
+        plt.draw()
     # If not in a sensor zone, the bird will not make a sound
     # Incrementing the count
     count += 1
@@ -210,13 +221,8 @@ def update(frame, birds, ax, sizeofGraph):
     return bird.artist,
 
 
-def main(sizeofGraph):
-    # Setting up the plot
-    fig, ax = plt.subplots()
-    ax.set_xlim(0, sizeofGraph)
-    ax.set_ylim(0, sizeofGraph)
+def main(sizeofGraph, drawGraph):
 
-    # The bird walker will start in the bottom left corner for initial test purposes
     # Making a new bird object
     speedOfBird = 0.5
     # Making the list of species by looking into the Images/Species folder and getting the names of the files
@@ -227,7 +233,7 @@ def main(sizeofGraph):
     OriginalAudioFilesFolder = GlobalConstants.ORIGINAL_AUDIO_FOLDER
     assert os.path.exists(OriginalAudioFilesFolder), 'The OriginalAudioFiles folder does not exist or is empty'
     speciesList = [species.split('.')[0] for species in os.listdir(speciesFolder)]
-    numberOfBirdsPerSpecies = 1
+    numberOfBirdsPerSpecies = 2
     birds = []
 
     # Making sure the number of files is the same in both the OriginalAudioFiles and the Species folder
@@ -244,17 +250,29 @@ def main(sizeofGraph):
 
     # Drawing the static background only once
     # TODO: Add an option to make the script run without making the graph such that it can go much faster
-    BaseGraphGenerator.main(sizeofGraph)
+    BaseGraphGenerator.main(sizeofGraph, drawGraph)
 
-    # Drawing the bird(s)
-    for bird in birds:
-        bird.draw(ax)
+    # Running the program not using any matplotlib graphics
+    limiter = 20
+    if not drawGraph:
+        for i in range(sizeofGraph * limiter):
+            update(i, birds, None, sizeofGraph, drawGraph)
 
-    plt.draw()
-    # Short pause to allow for the new bird to be accurately drawn
-    plt.pause(0.01)
-    # Running the animation - ensuring that the garbage collector does not delete the animation object
-    birdAnimation = FuncAnimation(fig, update, fargs=(birds, ax, sizeofGraph), frames=range(sizeofGraph * 20),
-                                  blit=True, interval=50)
+    if drawGraph:
+        # Setting up the plot
+        fig, ax = plt.subplots()
+        ax.set_xlim(0, sizeofGraph)
+        ax.set_ylim(0, sizeofGraph)
 
-    plt.show()
+        # Drawing the bird(s)
+        for bird in birds:
+            bird.draw(ax)
+
+        plt.draw()
+        # Short pause to allow for the new bird to be accurately drawn
+        plt.pause(0.01)
+        # Running the animation - ensuring that the garbage collector does not delete the animation object
+        birdAnimation = FuncAnimation(fig, update, fargs=(birds, ax, sizeofGraph, drawGraph), frames=range(sizeofGraph * limiter),
+                                      blit=True, interval=50)
+
+        plt.show()

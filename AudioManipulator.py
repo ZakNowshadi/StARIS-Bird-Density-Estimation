@@ -23,6 +23,8 @@ def saveManipulatedAudioFile(bird, count):
 
     originalAudio = AudioSegment.from_file(originalAudioFolder + '/' + bird.getSpecies() + '.wav')
     distance = bird.distanceFromSensor
+    #TODO: Possibly explore white noise, e.g. trees could muffle different frequencies
+
     # Manipulating the audio file
     # Using: https://stackoverflow.com/questions/13329617/change-the-volume-of-a-wav-file-in-python
     # Decreasing the amplitude of the sound as the distance from the sensor increases

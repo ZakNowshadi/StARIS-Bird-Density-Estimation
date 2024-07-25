@@ -45,7 +45,7 @@ class SensorZone:
         plt.gca().add_artist(circle)
 
 
-def main(maxSize):
+def main(maxSize, drawGraph):
     # Making the base graph
 
     X = maxSize
@@ -62,10 +62,12 @@ def main(maxSize):
     lowerLeftSensor = SensorZone(X, 0, maxSize)
     lowerRightSensor = SensorZone(X, Y, maxSize)
 
-    # Drawing each sensor zone's radius
-    # Draw a green of circle around each sensor
-    centreSensor.drawSensorZone()
-    upperLeftSensor.drawSensorZone()
-    upperRightSensor.drawSensorZone()
-    lowerLeftSensor.drawSensorZone()
-    lowerRightSensor.drawSensorZone()
+    if drawGraph:
+        # Drawing each sensor zone's radius
+        # Draw a green of circle around each sensor
+
+        centreSensor.drawSensorZone()
+        upperLeftSensor.drawSensorZone()
+        upperRightSensor.drawSensorZone()
+        lowerLeftSensor.drawSensorZone()
+        lowerRightSensor.drawSensorZone()

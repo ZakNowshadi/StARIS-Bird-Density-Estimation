@@ -102,6 +102,15 @@ class Bird(GraphObject):
     def getName(self):
         return self.name
 
+    # Function to allow the clear showing of when a bird is inside a sensor zone
+    def drawTemporaryCircle(self, ax):
+        circle = plt.Circle((self.x, self.y), self.sizeOfGraph / 20, color='purple', fill=False)
+        ax.add_artist(circle)
+        plt.draw()
+        plt.pause(0.5)  # Pause to show the circle
+        circle.remove()  # Remove the circle after the pause
+        plt.draw()
+
     def sensorZoneCheck(self):
         # Checking if the bird is in a sensor zone
         birdPoint = (self.x, self.y, self.x, self.y)
@@ -113,9 +122,16 @@ class Bird(GraphObject):
             distance = self.ifPointIsInsideSensorZoneReturnTheDistanceToTheSensorFromThePoint(self.x, self.y,
                                                                                               sensorZone)
             # If the distance is not -1, the bird is actually inside a true circular sensor zone
-            if distance != -1:
+            # But also need to check the bird is inside the mask
+            if (distance != -1 and BaseGraphGenerator.isPointInSideTheMask(self.x, self.y,
+                                                                           GlobalConstants.MASK_MASK_SIZE,
+                                                                           self.sizeOfGraph)):
                 self.currentSensorZone = sensorZone
                 self.distanceFromSensor = distance
+
+                # Drawing a temporary circle to show the user that the bird is in a sensor zone
+                self.drawTemporaryCircle(plt.gca())
+
                 # Printing that the bird is in a sensor zone in green text
                 print("\033[92m" + self.name + " is in a sensor zone" + "\033[0m")
                 print("Sensor zone coords: ", sensorZone.getX(), sensorZone.getY())
@@ -223,10 +239,11 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
 
             # Drawing a line from the bird to the home
             # Draw a green line from bird to home and store the reference
-            bird.lineToHome, = ax.plot([bird.getX(), bird.homeObject.getX()], [bird.getY(), bird.homeObject.getY()], 'g-')
+            bird.lineToHome, = ax.plot([bird.getX(), bird.homeObject.getX()], [bird.getY(), bird.homeObject.getY()],
+                                       'g-')
             # Draw a red line from bird to target and store the reference
-            bird.lineToTarget, = ax.plot([bird.getX(), bird.targetObject.getX()], [bird.getY(), bird.targetObject.getY()], 'r-')
-
+            bird.lineToTarget, = ax.plot([bird.getX(), bird.targetObject.getX()],
+                                         [bird.getY(), bird.targetObject.getY()], 'r-')
 
         if bird.sensorZoneCheck():
             # Passing the bird to the AudioManipulator
@@ -243,7 +260,6 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
 
 
 def main(sizeofGraph, drawGraph):
-
     # Making a new bird object
     speedOfBird = 0.5
     # Making the list of species by looking into the Images/Species folder and getting the names of the files
@@ -272,7 +288,10 @@ def main(sizeofGraph, drawGraph):
     # Drawing the static background only once if needed otherwise just setting up the sensor zone
     # Setting up the plot
     fig, ax = plt.subplots()
-    BaseGraphGenerator.main(sizeofGraph, ax, drawGraph)
+    # Making the base graph
+    # Ensuring the mask is slightly smaller than the maximum size of the graph
+    maskSize = GlobalConstants.MASK_MASK_SIZE
+    BaseGraphGenerator.main(maskSize, sizeofGraph, ax, drawGraph)
 
     # Running the program not using any matplotlib graphics
     limiter = 20
@@ -293,7 +312,8 @@ def main(sizeofGraph, drawGraph):
         # Short pause to allow for the new bird to be accurately drawn
         plt.pause(0.01)
         # Running the animation - ensuring that the garbage collector does not delete the animation object
-        birdAnimation = FuncAnimation(fig, update, fargs=(birds, ax, sizeofGraph, drawGraph), frames=range(sizeofGraph * limiter),
+        birdAnimation = FuncAnimation(fig, update, fargs=(birds, ax, sizeofGraph, drawGraph),
+                                      frames=range(sizeofGraph * limiter),
                                       blit=True, interval=50)
 
         plt.show()

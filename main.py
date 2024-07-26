@@ -4,9 +4,6 @@ import shutil
 import os
 import GlobalConstants
 
-# Defining the size of the graph
-maxSize = 20
-
 # Checking if the manipulated audio files folder exists
 if os.path.exists(GlobalConstants.MANIPULATED_AUDIO_FOLDER):
     # If it does, delete it
@@ -30,4 +27,4 @@ while True:
     else:
         print("Invalid input - please try again")
 
-BirdWalker.main(maxSize, drawGraph)
+BirdWalker.main(GlobalConstants.MAX_GRAPH_SIZE, drawGraph)

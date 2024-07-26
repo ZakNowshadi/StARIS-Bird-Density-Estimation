@@ -111,7 +111,7 @@ class Bird(GraphObject):
         circle.remove()  # Remove the circle after the pause
         plt.draw()
 
-    def sensorZoneCheck(self):
+    def sensorZoneCheck(self, drawGraph):
         # Checking if the bird is in a sensor zone
         birdPoint = (self.x, self.y, self.x, self.y)
         # Getting the index of the sensor zone that the bird is in
@@ -130,7 +130,8 @@ class Bird(GraphObject):
                 self.distanceFromSensor = distance
 
                 # Drawing a temporary circle to show the user that the bird is in a sensor zone
-                self.drawTemporaryCircle(plt.gca())
+                if drawGraph:
+                    self.drawTemporaryCircle(plt.gca())
 
                 # Printing that the bird is in a sensor zone in green text
                 print("\033[92m" + self.name + " is in a sensor zone" + "\033[0m")
@@ -245,7 +246,7 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
             bird.lineToTarget, = ax.plot([bird.getX(), bird.targetObject.getX()],
                                          [bird.getY(), bird.targetObject.getY()], 'r-')
 
-        if bird.sensorZoneCheck():
+        if bird.sensorZoneCheck(drawGraph):
             # Passing the bird to the AudioManipulator
             # Where the frame acts as the count
             AudioManipulator.saveManipulatedAudioFile(bird, count)

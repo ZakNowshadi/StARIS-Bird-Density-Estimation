@@ -71,6 +71,27 @@ class Target(GraphObject):
         self.setRandomCoords()
 
 
+class CircleManager:
+    def __init__(self):
+        self.circles = []
+
+    def drawCircle(self, ax, x, y, radius, colour, fill=False):
+        circle = plt.Circle((x, y), radius, color=colour, fill=fill)
+        ax.add_artist(circle)
+        plt.draw()
+        # Pausing to allow the user to see the circle
+        plt.pause(1)
+        # Adding the circle to the list of circles to be removed
+        self.circles.append(circle)
+        plt.draw()
+
+    def removeAllCircles(self):
+        for circle in self.circles:
+            circle.remove()
+        self.circles.clear()
+        plt.draw()
+
+
 # Making a bird class
 class Bird(GraphObject):
     def __init__(self, name, imagePath, species, speed, sizeofGraph):
@@ -94,8 +115,8 @@ class Bird(GraphObject):
         self.timeAwayFromHome = 0
         self.lineToHome = None
         self.lineToTarget = None
-        # Making a list of circles to be drawn so that the removal of the circles can be done easily
-        self.circles = []
+        # Making a circle manager object to manage the circles made when the bird is in a sensor zone and whistles
+        self.circleManager = CircleManager()
 
     # Getter for species and name
     def getSpecies(self):
@@ -106,21 +127,14 @@ class Bird(GraphObject):
 
     # Function to allow the clear showing of when a bird is inside a sensor zone
     def drawTemporaryCircle(self, ax):
-        circle = plt.Circle((self.x, self.y), self.sizeOfGraph / 20, color='purple', fill=False)
-        ax.add_artist(circle)
-        plt.draw()
-        # Pausing to allow the user to see the circle
-        plt.pause(1)
-        # Adding the circle to the list of circles to be removed
-        self.circles.append(circle)
-        plt.draw()
+        radius = self.sizeOfGraph / 20
+        colour = 'purple'
+        self.circleManager.drawCircle(ax, self.x, self.y, radius, colour)
+        self.circleManager.removeAllCircles()
 
     def sensorZoneCheck(self, drawGraph):
         # Before any checking is done all circles are removed
-        for circle in self.circles:
-            circle.remove()
-        self.circles.clear()
-        plt.draw()
+        self.circleManager.removeAllCircles()
 
         # Checking if the bird is in a sensor zone
         birdPoint = (self.x, self.y, self.x, self.y)

@@ -94,6 +94,8 @@ class Bird(GraphObject):
         self.timeAwayFromHome = 0
         self.lineToHome = None
         self.lineToTarget = None
+        # Making a list of circles to be drawn so that the removal of the circles can be done easily
+        self.circles = []
 
     # Getter for species and name
     def getSpecies(self):
@@ -107,11 +109,19 @@ class Bird(GraphObject):
         circle = plt.Circle((self.x, self.y), self.sizeOfGraph / 20, color='purple', fill=False)
         ax.add_artist(circle)
         plt.draw()
-        plt.pause(0.5)  # Pause to show the circle
-        circle.remove()  # Remove the circle after the pause
+        # Pausing to allow the user to see the circle
+        plt.pause(1)
+        # Adding the circle to the list of circles to be removed
+        self.circles.append(circle)
         plt.draw()
 
     def sensorZoneCheck(self, drawGraph):
+        # Before any checking is done all circles are removed
+        for circle in self.circles:
+            circle.remove()
+        self.circles.clear()
+        plt.draw()
+
         # Checking if the bird is in a sensor zone
         birdPoint = (self.x, self.y, self.x, self.y)
         # Getting the index of the sensor zone that the bird is in

@@ -1,6 +1,8 @@
 # Tried to ensure all the hardcoded paths are in one place such that any changes (if needed) can be done easily
 # as all the places where these paths are used in the codebase are dependent on these global variables below
 
+global SIMULATION_FRAME_SAVING_FOLDER
+SIMULATION_FRAME_SAVING_FOLDER = 'SimulationFrameByFrame'
 global MANIPULATED_AUDIO_FOLDER
 MANIPULATED_AUDIO_FOLDER = 'Audio/ManipulatedAudioFiles'
 global ORIGINAL_AUDIO_FOLDER

@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
@@ -108,9 +109,8 @@ class Bird(GraphObject):
         # Making the initial target object
         self.targetObject = Target(sizeofGraph)
         self.homeObject = Home(sizeofGraph)
-        # TODO: Implement the currentlyInFlight mechanic such that audio is only recorded when the bird is in flight
-        #  or not depending on the species - which wil vary species by species
-        self.currentlyInFlight = False
+        self.currentlyInFlight = None
+        self.currentlyWhistling = True
         self.setRandomCoords()
         self.timeAwayFromHome = 0
         self.lineToHome = None
@@ -131,6 +131,13 @@ class Bird(GraphObject):
         colour = 'purple'
         self.circleManager.drawCircle(ax, self.x, self.y, radius, colour)
         self.circleManager.removeAllCircles()
+
+    def checkIfWhistling(self):
+        # TODO: Implement the logic for when a bird should whistle based species by species
+        if self.species == 'robin':
+            return True
+        if self.species == 'blackbird':
+            return True
 
     def sensorZoneCheck(self, drawGraph):
         # Before any checking is done all circles are removed
@@ -240,6 +247,7 @@ def distanceBetweenTwoPoints(x1, y1, x2, y2):
 
 
 def update(frame, birds, ax, sizeofGraph, drawGraph):
+
     # Incrementing the coords of the bird
     global count
 
@@ -270,12 +278,17 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
             bird.lineToTarget, = ax.plot([bird.getX(), bird.targetObject.getX()],
                                          [bird.getY(), bird.targetObject.getY()], 'r-')
 
-        if bird.sensorZoneCheck(drawGraph):
+        if bird.sensorZoneCheck(drawGraph) and bird.currentlyWhistling:
             # Passing the bird to the AudioManipulator
             # Where the frame acts as the count
             AudioManipulator.saveManipulatedAudioFile(bird, count)
 
     if drawGraph:
+        # Saving the frames to a folder
+        frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
+        frame_path = os.path.join(frameSavingFolder, f'frame_{frame}.png')
+        plt.savefig(frame_path)
+
         plt.draw()
     # If not in a sensor zone, the bird will not make a sound
     # Incrementing the count
@@ -285,6 +298,14 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
 
 
 def main(sizeofGraph, drawGraph):
+    # Making the frame by frame folder if it does not exist and then wiping it clean
+    frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
+    if os.path.exists(frameSavingFolder):
+        # If it does, delete it
+        shutil.rmtree(frameSavingFolder)
+    # Making a new frame by frame folder
+    os.makedirs(frameSavingFolder)
+
     # Making a new bird object
     speedOfBird = 0.5
     # Making the list of species by looking into the Images/Species folder and getting the names of the files

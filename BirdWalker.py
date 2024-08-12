@@ -332,9 +332,10 @@ def main(sizeofGraph, drawGraph):
     # excluding the .png
     speciesFolder = GlobalConstants.SPECIES_IMAGES_FOLDER
     # Checking the species folder exists and is populated
-    assert os.path.exists(speciesFolder), 'The species folder does not exist or is empty'
+    assert os.path.exists(speciesFolder), 'The ' + speciesFolder + ' folder does not exist or is empty'
     originalAudioFilesFolder = GlobalConstants.ORIGINAL_AUDIO_FOLDER
-    assert os.path.exists(originalAudioFilesFolder), 'The OriginalAudioFiles folder does not exist or is empty'
+    assert os.path.exists(originalAudioFilesFolder), 'The ' + originalAudioFilesFolder + ('folder does not exist or is '
+                                                                                          'empty')
     speciesList = [species.split('.')[0] for species in os.listdir(speciesFolder)]
     numberOfBirdsPerSpecies = 2
     birds = []

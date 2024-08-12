@@ -92,6 +92,11 @@ class CircleManager:
         self.circles.clear()
         plt.draw()
 
+    def removeSpecificCircle(self, circle):
+        circle.remove()
+        self.circles.remove(circle)
+        plt.draw()
+
 
 # Making a bird class
 class Bird(GraphObject):
@@ -130,7 +135,11 @@ class Bird(GraphObject):
         radius = self.sizeOfGraph / 20
         colour = 'purple'
         self.circleManager.drawCircle(ax, self.x, self.y, radius, colour)
-        self.circleManager.removeAllCircles()
+
+    def removeCircle(self):
+        # Removing the circle if it is there
+        if self.circleManager.circles:
+            self.circleManager.removeSpecificCircle(self.circleManager.circles[0])
 
     def checkIfWhistling(self):
         # TODO: Implement the logic for when a bird should whistle based species by species
@@ -140,9 +149,6 @@ class Bird(GraphObject):
             return True
 
     def sensorZoneCheck(self, drawGraph):
-        # Before any checking is done all circles are removed
-        self.circleManager.removeAllCircles()
-
         # Checking if the bird is in a sensor zone
         birdPoint = (self.x, self.y, self.x, self.y)
         # Getting the index of the sensor zone that the bird is in
@@ -173,6 +179,10 @@ class Bird(GraphObject):
         # If the bird is not in any sensor zone
         self.currentSensorZone = None
         self.distanceFromSensor = 0
+        # Removing the circle if it is there
+        if drawGraph:
+            self.removeCircle()
+
         # Printing that the bird is not in a sensor zone in a red text
         print("\033[91m" + self.name + " is not in a sensor zone" + "\033[0m")
         return False
@@ -185,7 +195,12 @@ class Bird(GraphObject):
             return distance
         return -1
 
+    def removeAllCircles(self):
+        self.circleManager.removeAllCircles()
+
     def updatePosition(self, sizeofGraph):
+        self.removeAllCircles()
+
         # Finding the distance the bird is from home
         distanceFromHome = distanceBetweenTwoPoints(self.x, self.y, self.homeObject.getX(), self.homeObject.getY())
 
@@ -238,8 +253,11 @@ class Bird(GraphObject):
             self.timeAwayFromHome = 0
 
 
-global count
-count = 0
+global frameCount
+frameCount = 0
+
+global tickCount
+tickCount = 0
 
 
 def distanceBetweenTwoPoints(x1, y1, x2, y2):
@@ -247,10 +265,10 @@ def distanceBetweenTwoPoints(x1, y1, x2, y2):
 
 
 def update(frame, birds, ax, sizeofGraph, drawGraph):
-
     # Incrementing the coords of the bird
-    global count
+    global frameCount, tickCount
 
+    frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
     for bird in birds:
         bird.updatePosition(sizeofGraph)
         # Printing current coords of the bird
@@ -281,18 +299,20 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
         if bird.sensorZoneCheck(drawGraph) and bird.currentlyWhistling:
             # Passing the bird to the AudioManipulator
             # Where the frame acts as the count
-            AudioManipulator.saveManipulatedAudioFile(bird, count)
+            AudioManipulator.saveManipulatedAudioFile(bird, frameCount)
 
-    if drawGraph:
-        # Saving the frames to a folder
-        frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
-        frame_path = os.path.join(frameSavingFolder, f'frame_{frame}.png')
-        plt.savefig(frame_path)
+        # Saving each tick to a folder
+        if drawGraph:
+            frame_path = os.path.join(frameSavingFolder, f'frame_{tickCount}.png')
+
+            plt.savefig(frame_path)
+
+        tickCount += 1
 
         plt.draw()
     # If not in a sensor zone, the bird will not make a sound
     # Incrementing the count
-    count += 1
+    frameCount += 1
     # The comma at the end is to unpack the tuple, so it can be passed as expected into caller
     return bird.artist,
 
@@ -313,18 +333,16 @@ def main(sizeofGraph, drawGraph):
     speciesFolder = GlobalConstants.SPECIES_IMAGES_FOLDER
     # Checking the species folder exists and is populated
     assert os.path.exists(speciesFolder), 'The species folder does not exist or is empty'
-    OriginalAudioFilesFolder = GlobalConstants.ORIGINAL_AUDIO_FOLDER
-    assert os.path.exists(OriginalAudioFilesFolder), 'The OriginalAudioFiles folder does not exist or is empty'
+    originalAudioFilesFolder = GlobalConstants.ORIGINAL_AUDIO_FOLDER
+    assert os.path.exists(originalAudioFilesFolder), 'The OriginalAudioFiles folder does not exist or is empty'
     speciesList = [species.split('.')[0] for species in os.listdir(speciesFolder)]
     numberOfBirdsPerSpecies = 2
     birds = []
 
     # Making sure the number of files is the same in both the OriginalAudioFiles and the Species folder
-    numberOfFilesInOriginalAudioFiles = len(os.listdir(OriginalAudioFilesFolder))
+    numberOfFilesInOriginalAudioFiles = len(os.listdir(originalAudioFilesFolder))
     numberOfFilesInSpeciesFolder = len(os.listdir(speciesFolder))
-    assert numberOfFilesInOriginalAudioFiles == numberOfFilesInSpeciesFolder, 'The number of files in the ' \
-                                                                              'OriginalAudioFiles folder and the ' \
-                                                                              'Species folder are not the same. ' \
+    assert numberOfFilesInOriginalAudioFiles == numberOfFilesInSpeciesFolder, 'The number of files in the ' + originalAudioFilesFolder + ' folder and the ' + speciesFolder + ' are not the same.'
 
     for species in speciesList:
         birdImageFilePath = speciesFolder + '/' + species + '.png'

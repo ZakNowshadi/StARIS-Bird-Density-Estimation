@@ -2,13 +2,17 @@ import os
 
 from matplotlib import pyplot as plt
 from matplotlib.image import imread
+from matplotlib.widgets import Button
 
 import GlobalConstants
 
 
 def loadTicks(ticksFolder):
-    tickFiles = sorted([os.path.join(ticksFolder, f) for f in os.listdir(ticksFolder) if f.endswith('.png')])
-    return tickFiles
+    if isinstance(ticksFolder, str):
+        tickFiles = sorted([os.path.join(ticksFolder, f) for f in os.listdir(ticksFolder) if f.endswith('.png')])
+        return tickFiles
+    else:
+        raise TypeError("ticksFolder should be a string representing the path to the folder.")
 
 
 class SlideShow:
@@ -46,8 +50,8 @@ class SlideShow:
 
 def main():
     ticksFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
-    tick_files = loadTicks(ticksFolder)
-    slideshow = SlideShow(tick_files)
+    tickFiles = loadTicks(ticksFolder)
+    slideshow = SlideShow(tickFiles)
     slideshow.show()
 
 

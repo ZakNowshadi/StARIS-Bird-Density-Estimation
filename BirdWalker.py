@@ -318,13 +318,15 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
 
 
 def main(sizeofGraph, drawGraph):
-    # Making the frame by frame folder if it does not exist and then wiping it clean
-    frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
-    if os.path.exists(frameSavingFolder):
-        # If it does, delete it
-        shutil.rmtree(frameSavingFolder)
-    # Making a new frame by frame folder
-    os.makedirs(frameSavingFolder)
+
+    if drawGraph:
+        # Making the frame by frame folder if it does not exist and then wiping it clean
+        frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
+        if os.path.exists(frameSavingFolder):
+            # If it does, delete it
+            shutil.rmtree(frameSavingFolder)
+        # Making a new frame by frame folder
+        os.makedirs(frameSavingFolder)
 
     # Making a new bird object
     speedOfBird = 0.5

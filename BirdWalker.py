@@ -115,8 +115,8 @@ class Bird(GraphObject):
         self.targetObject = Target(sizeofGraph)
         self.homeObject = Home(sizeofGraph)
         self.currentlyInFlight = None
-        self.currentlyWhistling = True
         self.setRandomCoords()
+        self.currentlyWhistling = None
         self.timeAwayFromHome = 0
         self.lineToHome = None
         self.lineToTarget = None
@@ -142,11 +142,13 @@ class Bird(GraphObject):
             self.circleManager.removeSpecificCircle(self.circleManager.circles[0])
 
     def checkIfWhistling(self):
-        # TODO: Implement the logic for when a bird should whistle based species by species
+        # TODO: Implement a more sophisticated logic for when a bird should whistle based species by species
         if self.species == 'robin':
-            return True
+            if random.random() < 0.5:
+                self.currentlyWhistling = True
         if self.species == 'blackbird':
-            return True
+            if random.random() < 0.7:
+                self.currentlyWhistling = True
 
     def sensorZoneCheck(self, drawGraph):
         # Checking if the bird is in a sensor zone
@@ -160,9 +162,11 @@ class Bird(GraphObject):
                                                                                               sensorZone)
             # If the distance is not -1, the bird is actually inside a true circular sensor zone
             # But also need to check the bird is inside the mask
+            # And also that the bird is currently whistling
+            self.checkIfWhistling()
             if (distance != -1 and BaseGraphGenerator.isPointInSideTheMask(self.x, self.y,
                                                                            GlobalConstants.MASK_MASK_SIZE,
-                                                                           self.sizeOfGraph)):
+                                                                           self.sizeOfGraph) and self.currentlyWhistling):
                 self.currentSensorZone = sensorZone
                 self.distanceFromSensor = distance
 
@@ -170,8 +174,7 @@ class Bird(GraphObject):
                 if drawGraph:
                     self.drawTemporaryCircle(plt.gca())
 
-                # Printing that the bird is in a sensor zone in green text
-                print("\033[92m" + self.name + " is in a sensor zone" + "\033[0m")
+                print("\033[92m" + self.name + " made a detectable whistle" + "\033[0m")
                 print("Sensor zone coords: ", sensorZone.getX(), sensorZone.getY())
                 print("Distance from sensor: ", distance)
                 return True
@@ -184,7 +187,7 @@ class Bird(GraphObject):
             self.removeCircle()
 
         # Printing that the bird is not in a sensor zone in a red text
-        print("\033[91m" + self.name + " is not in a sensor zone" + "\033[0m")
+        print("\033[91m" + self.name + " did NOT make a detectable whistle" + "\033[0m")
         return False
 
     # Returns a positive number (the distance) if the point is within the sensor zone
@@ -276,7 +279,7 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
         print(bird.getName() + " is at: ", bird.getX(), bird.getY())
         print(bird.getName() + " has spent " + str(bird.timeAwayFromHome) + " ticks away from home")
         if drawGraph:
-            # Removing thw existing lines
+            # Removing the existing lines
             if bird.lineToHome:
                 bird.lineToHome.remove()
             if bird.lineToTarget:
@@ -296,7 +299,7 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
             bird.lineToTarget, = ax.plot([bird.getX(), bird.targetObject.getX()],
                                          [bird.getY(), bird.targetObject.getY()], 'r-')
 
-        if bird.sensorZoneCheck(drawGraph) and bird.currentlyWhistling:
+        if bird.sensorZoneCheck(drawGraph):
             # Passing the bird to the AudioManipulator
             # Where the frame acts as the count
             AudioManipulator.saveManipulatedAudioFile(bird, frameCount)
@@ -318,7 +321,6 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
 
 
 def main(sizeofGraph, drawGraph):
-
     if drawGraph:
         # Making the frame by frame folder if it does not exist and then wiping it clean
         frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER

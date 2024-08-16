@@ -9,10 +9,10 @@ sensorZoneIndex = index.Index()
 class SensorZone:
     instances = []
 
-    def __init__(self, x, y, sizeOfGraph):
-        self.x = x
-        self.y = y
-        self.radius = sizeOfGraph / 3.9
+    def __init__(self, x, y, sizeOfGraph, radius):
+        self.radius = radius
+        self.x = max(self.radius, min(x, sizeOfGraph - self.radius))
+        self.y = max(self.radius, min(y, sizeOfGraph - self.radius))
         SensorZone.instances.append(self)
         # Adding the sensor into the R-Tree
         # Making a bounding box around the sensor
@@ -53,17 +53,19 @@ def isPointInSideTheMask(x, y, maskSize, maxSize):
 
 def main(maskSize, maxSize, ax, drawGraph):
     differenceBetweenMaxAndMask = maxSize - maskSize
+    radius = maskSize / 5.5
 
-    # Make a graph of x by y
+
+# Make a graph of x by y
     # Placing a purple dot in the center to represent the sensor
     # Making the centre sensor object
-    centreSensor = SensorZone(maxSize / 2, maxSize / 2, maskSize)
+    centreSensor = SensorZone(maxSize / 2, maxSize / 2, maskSize, radius)
 
-    # Making the corner sensor objects within the mask
-    upperLeftSensor = SensorZone(differenceBetweenMaxAndMask, differenceBetweenMaxAndMask, maskSize)
-    upperRightSensor = SensorZone(maskSize, differenceBetweenMaxAndMask, maskSize)
-    lowerLeftSensor = SensorZone(differenceBetweenMaxAndMask, maskSize, maskSize)
-    lowerRightSensor = SensorZone(maskSize, maskSize, maskSize)
+    # Making the corner sensor objects fully within the mask
+    upperLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, differenceBetweenMaxAndMask + radius, maskSize, radius)
+    upperRightSensor = SensorZone(maskSize - radius, differenceBetweenMaxAndMask + radius, maskSize, radius)
+    lowerLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, maskSize - radius, maskSize, radius)
+    lowerRightSensor = SensorZone(maskSize - radius, maskSize - radius, maskSize, radius)
 
     # Drawing a blue box around the mask
     plt.plot([differenceBetweenMaxAndMask, maskSize], [differenceBetweenMaxAndMask, differenceBetweenMaxAndMask], 'b')

@@ -15,8 +15,8 @@ global HOME_IMAGE_FILE
 HOME_IMAGE_FILE = GRAPH_ITEMS_IMAGES_FOLDER + '/bird_nest.png'
 global TARGET_IMAGE_FILE
 TARGET_IMAGE_FILE = GRAPH_ITEMS_IMAGES_FOLDER + '/red_target.png'
-global MAX_GRAPH_SIZE
-MAX_GRAPH_SIZE = 20
 # The size of the mask will be a slightly reduced version of the normal graph size
 global MASK_MASK_SIZE
-MASK_MASK_SIZE = MAX_GRAPH_SIZE * 0.8
+MASK_MASK_SIZE = 20
+global MAX_GRAPH_SIZE
+MAX_GRAPH_SIZE = int(MASK_MASK_SIZE * 1.1)

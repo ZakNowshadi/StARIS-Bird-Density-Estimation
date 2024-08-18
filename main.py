@@ -27,6 +27,6 @@ while True:
     else:
         print("Invalid input - please try again")
 
-BirdWalker.main(GlobalConstants.MAX_GRAPH_SIZE, drawGraph)
+BirdWalker.main(drawGraph)
 
 

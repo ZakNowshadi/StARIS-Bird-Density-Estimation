@@ -320,7 +320,8 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
     return bird.artist,
 
 
-def main(sizeofGraph, drawGraph):
+def main(drawGraph):
+    sizeofGraph = GlobalConstants.MAX_GRAPH_SIZE
     if drawGraph:
         # Making the frame by frame folder if it does not exist and then wiping it clean
         frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
@@ -359,8 +360,7 @@ def main(sizeofGraph, drawGraph):
     fig, ax = plt.subplots()
     # Making the base graph
     # Ensuring the mask is slightly smaller than the maximum size of the graph
-    maskSize = GlobalConstants.MASK_MASK_SIZE
-    BaseGraphGenerator.main(maskSize, sizeofGraph, ax, drawGraph)
+    BaseGraphGenerator.main(ax, drawGraph)
 
     # Running the program not using any matplotlib graphics
     limiter = 20

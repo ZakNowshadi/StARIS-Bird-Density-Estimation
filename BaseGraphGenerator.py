@@ -1,5 +1,9 @@
+from math import radians
+
 from matplotlib import pyplot as plt
 from rtree import index
+
+import GlobalConstants
 
 # Making the R-Tree index
 sensorZoneIndex = index.Index()
@@ -11,6 +15,7 @@ class SensorZone:
 
     def __init__(self, x, y, sizeOfGraph, radius):
         self.radius = radius
+        # Ensuring the sensor is within the bounds of the mask
         self.x = max(self.radius, min(x, sizeOfGraph - self.radius))
         self.y = max(self.radius, min(y, sizeOfGraph - self.radius))
         SensorZone.instances.append(self)
@@ -51,21 +56,30 @@ def isPointInSideTheMask(x, y, maskSize, maxSize):
     return differenceBetweenMaxAndMask < x < maskSize and differenceBetweenMaxAndMask < y < maskSize
 
 
-def main(maskSize, maxSize, ax, drawGraph):
+def main(ax, drawGraph):
+    maskSize = GlobalConstants.MASK_MASK_SIZE
+    maxSize = GlobalConstants.MAX_GRAPH_SIZE
     differenceBetweenMaxAndMask = maxSize - maskSize
+    # Finding a radius to maximise the space being sensed by the 5 sensors within the mask, without there being overlap
     radius = maskSize / 5.5
 
-
-# Make a graph of x by y
-    # Placing a purple dot in the center to represent the sensor
     # Making the centre sensor object
-    centreSensor = SensorZone(maxSize / 2, maxSize / 2, maskSize, radius)
+    centralInternalMaskX = maskSize / 2
+    centralInternalMaskY = maskSize / 2
+
+    actualCentralX = centralInternalMaskX + differenceBetweenMaxAndMask / 2
+    actualCentralY = centralInternalMaskY + differenceBetweenMaxAndMask / 2
+
+    centreSensor = SensorZone(actualCentralX, actualCentralY, maxSize, radius)
 
     # Making the corner sensor objects fully within the mask
-    upperLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, differenceBetweenMaxAndMask + radius, maskSize, radius)
-    upperRightSensor = SensorZone(maskSize - radius, differenceBetweenMaxAndMask + radius, maskSize, radius)
-    lowerLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, maskSize - radius, maskSize, radius)
-    lowerRightSensor = SensorZone(maskSize - radius, maskSize - radius, maskSize, radius)
+    # Each point needs to be 1 diameter away from the center of the mask and 1 radius away from the edge of the mask
+    # To not overlap with the other sensors
+    upperLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, differenceBetweenMaxAndMask + radius, maxSize,
+                                 radius)
+    upperRightSensor = SensorZone(maskSize - radius, differenceBetweenMaxAndMask + radius, maxSize, radius)
+    lowerLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, maskSize - radius, maxSize, radius)
+    lowerRightSensor = SensorZone(maskSize - radius, maskSize - radius, maxSize, radius)
 
     # Drawing a blue box around the mask
     plt.plot([differenceBetweenMaxAndMask, maskSize], [differenceBetweenMaxAndMask, differenceBetweenMaxAndMask], 'b')
@@ -76,6 +90,7 @@ def main(maskSize, maxSize, ax, drawGraph):
     # But ensuring the graph is drawn of maxSize size
     # Drawing the graph
     plt.xlim(0, maxSize)
+    plt.ylim(0, maxSize)
 
     if drawGraph:
         # Drawing each sensor zone's radius

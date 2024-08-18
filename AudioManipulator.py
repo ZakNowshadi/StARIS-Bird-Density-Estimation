@@ -18,7 +18,7 @@ def saveManipulatedAudioFile(bird, count):
         # If it does not, make it
         os.makedirs(birdFolder)
 
-    fileName = f"{count}_{bird.getX()},{bird.getY()}.wav"
+    fileName = f"{count}_{bird.currentSensorZone.getX()},{bird.currentSensorZone.getY()}.wav"
     filePath = birdFolder + '/' + fileName
 
     originalAudio = AudioSegment.from_file(originalAudioFolder + '/' + bird.getSpecies() + '.wav')

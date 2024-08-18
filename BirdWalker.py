@@ -100,6 +100,7 @@ class CircleManager:
 
 # Making a bird class
 class Bird(GraphObject):
+
     def __init__(self, name, imagePath, species, speed, sizeofGraph):
         super().__init__(sizeofGraph, imagePath)
         self.image = mpimg.imread(imagePath)

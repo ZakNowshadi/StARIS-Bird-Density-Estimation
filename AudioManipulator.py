@@ -30,6 +30,7 @@ def saveManipulatedAudioFile(bird, count):
     # Decreasing the amplitude of the sound as the distance from the sensor increases
     manipulatedWhistle = originalAudio - (distance * 15)
     manipulatedWhistle.export(filePath, format='wav')
+    # Appending the tick number, sensor x and y to the csv file
     appendSpecificBirdTickToCSV(bird, count)
 
 

@@ -212,11 +212,12 @@ class Bird(GraphObject):
         self.timeAwayFromHome += 1  # Increment time away from home
 
         # Adjusting probabilityOfGoingHome to factor in timeAwayFromHome
+        # The longer the bird is away from home, the more likely it is to go home
         timeFactor = min(1, self.timeAwayFromHome / 100)
 
         # Making the probability of going home a function of the distance and time from home
         # The further the bird is from home, the more likely it is to go home
-        probabilityOfGoingHome = min(1, (distanceFromHome / (self.sizeOfGraph * 0.5)) + timeFactor)
+        probabilityOfGoingHome = min(1, (distanceFromHome / (self.sizeOfGraph * 0.5)) + timeFactor) / 2
 
         # Moving towards home with a probability that increases as the bird gets further from home
         if random.random() < probabilityOfGoingHome:
@@ -271,16 +272,23 @@ def distanceBetweenTwoPoints(x1, y1, x2, y2):
 def update(frame, birds, ax, sizeofGraph, drawGraph):
     # Incrementing the coords of the bird
     global frameCount, tickCount
-
+    numOfBirds = len(birds)
     frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
+    artists = []
+    # Processing all birds movements first and then drawing them
+    # This is to ensure that all bird's movements are processed before drawing them
+    # Such that they all move at the same time
     for bird in birds:
         bird.updatePosition(sizeofGraph)
+
+    # Performing drawing operations
+    for bird in birds:
         # Printing current coords of the bird
         print("\n-----------------------")
         print(bird.getName() + " is at: ", bird.getX(), bird.getY())
         print(bird.getName() + " has spent " + str(bird.timeAwayFromHome) + " ticks away from home")
         if drawGraph:
-            # Removing the existing lines
+            # Removing the lines
             if bird.lineToHome:
                 bird.lineToHome.remove()
             if bird.lineToTarget:
@@ -300,25 +308,24 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
             bird.lineToTarget, = ax.plot([bird.getX(), bird.targetObject.getX()],
                                          [bird.getY(), bird.targetObject.getY()], 'r-')
 
+            artists.extend([bird.artist, bird.lineToHome, bird.lineToTarget])
+
         if bird.sensorZoneCheck(drawGraph):
             # Passing the bird to the AudioManipulator
             # Where the frame acts as the count
             AudioManipulator.saveManipulatedAudioFile(bird, frameCount)
 
-        # Saving each tick to a folder
-        if drawGraph:
-            frame_path = os.path.join(frameSavingFolder, f'frame_{tickCount}.png')
-
-            plt.savefig(frame_path)
-
         tickCount += 1
-
+        # Saving each tick to a folder
+        # Ensuring the graph is rendered only when all birds have moved
+    if drawGraph:
+        frame_path = os.path.join(frameSavingFolder, f'frame_{tickCount}.png')
+        plt.savefig(frame_path)
         plt.draw()
-    # If not in a sensor zone, the bird will not make a sound
-    # Incrementing the count
+
     frameCount += 1
-    # The comma at the end is to unpack the tuple, so it can be passed as expected into caller
-    return bird.artist,
+    # Returning the artist object by getting the artist object of each bird
+    return artists
 
 
 def main(drawGraph):

@@ -62,7 +62,7 @@ def main(ax, drawGraph):
     maxSize = GlobalConstants.MAX_GRAPH_SIZE
     differenceBetweenMaxAndMask = maxSize - maskSize
     # Finding a radius to maximise the space being sensed by the 5 sensors within the mask, without there being overlap
-    radius = maskSize / 5.5
+    radius = maskSize / 7
 
     # Making the centre sensor object
     centralInternalMaskX = maskSize / 2

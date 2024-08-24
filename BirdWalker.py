@@ -272,22 +272,28 @@ def distanceBetweenTwoPoints(x1, y1, x2, y2):
 def update(frame, birds, ax, sizeofGraph, drawGraph):
     # Incrementing the coords of the bird
     global frameCount, tickCount
+
     frameSavingFolder = GlobalConstants.SIMULATION_FRAME_SAVING_FOLDER
-    artists = []
-    # Processing all birds movements first and then drawing them
-    # This is to ensure that all bird's movements are processed before drawing them
-    # Such that they all move at the same time
+    # Working out the new positions of the birds
     for bird in birds:
         bird.updatePosition(sizeofGraph)
-
-    # Performing drawing operations
-    for bird in birds:
         # Printing current coords of the bird
         print("\n-----------------------")
         print(bird.getName() + " is at: ", bird.getX(), bird.getY())
         print(bird.getName() + " has spent " + str(bird.timeAwayFromHome) + " ticks away from home")
-        if drawGraph:
-            # Removing the lines
+
+        if bird.sensorZoneCheck(drawGraph):
+            # Passing the bird to the AudioManipulator
+            # Where the frame acts as the count
+            AudioManipulator.saveManipulatedAudioFile(bird, frameCount)
+        tickCount += 1
+
+    frameCount += 1
+    # Drawing the graph
+    if drawGraph:
+        # Drawing each bird such that they all render to move at the same time
+        for bird in birds:
+            # Removing the existing lines
             if bird.lineToHome:
                 bird.lineToHome.remove()
             if bird.lineToTarget:
@@ -305,27 +311,17 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
             # Draw a red line from bird to target and store the reference
             bird.lineToTarget, = ax.plot([bird.getX(), bird.targetObject.getX()],
                                          [bird.getY(), bird.targetObject.getY()], 'r-')
-
             bird.draw(ax)
-            artists.extend([bird.artist, bird.lineToHome, bird.lineToTarget])
 
-        if bird.sensorZoneCheck(drawGraph):
-            # Passing the bird to the AudioManipulator
-            # Where the frame acts as the count
-            AudioManipulator.saveManipulatedAudioFile(bird, frameCount)
+        framePath = os.path.join(frameSavingFolder, f'frame_{frameCount}.png')
+        plt.savefig(framePath)
 
-        tickCount += 1
-
-    # Saving each frame to a folder
-    # Ensuring the graph is rendered only when all birds have moved
-    if drawGraph:
-        frame_path = os.path.join(frameSavingFolder, f'frame_{frameCount}.png')
-        plt.savefig(frame_path)
         plt.draw()
+    # If not in a sensor zone, the bird will not make a sound
+    # Incrementing the count
 
-    frameCount += 1
-    # Returning the artist object by getting the artist object of each bird
-    return artists
+    # The comma at the end is to unpack the tuple, so it can be passed as expected into caller
+    return bird.artist,
 
 
 def main(drawGraph):

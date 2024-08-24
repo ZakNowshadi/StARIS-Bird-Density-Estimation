@@ -17,6 +17,6 @@ global TARGET_IMAGE_FILE
 TARGET_IMAGE_FILE = GRAPH_ITEMS_IMAGES_FOLDER + '/red_target.png'
 # The size of the mask will be a slightly reduced version of the normal graph size
 global MASK_MASK_SIZE
-MASK_MASK_SIZE = 20
+MASK_MASK_SIZE = 40
 global MAX_GRAPH_SIZE
-MAX_GRAPH_SIZE = int(MASK_MASK_SIZE * 1.1)
+MAX_GRAPH_SIZE = int(MASK_MASK_SIZE * 1.3)

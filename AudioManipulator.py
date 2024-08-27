@@ -40,7 +40,7 @@ def appendSpecificBirdTickToCSV(bird, count):
     speciesFolder = manipulatedAudioFolder + '/' + bird.getSpecies()
     birdFolder = speciesFolder + '/' + bird.getName()
 
-    fileName = birdFolder + '/' + f"{bird.getName()}_data.csv"
+    fileName = birdFolder + '/' + "data.csv"
     # Checking if the csv file exists
     if not os.path.exists(fileName):
         # If it does not, make it

@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from PIL.ImageFont import truetype
 
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Slider
@@ -7,12 +8,20 @@ from matplotlib.widgets import Slider
 import GlobalConstants
 
 
-def readCSVFile(folderPath):
-    # Reading the csv file
-    csvFile = [f for f in os.listdir(folderPath) if f.endswith('.csv')]
-    dataFrame = [pd.read_csv(os.path.join(folderPath, file)) for file in csvFile]
+def readAllTicksFromCSV(tick, filePath):
 
-    return dataFrame
+    # Validation for the file path
+    assert os.path.exists(filePath), f"ERROR - The file path does not exist: {filePath}"
+
+    dataFrames = []
+    with open(filePath, 'r') as file:
+        for line in file:
+            tick_data = line.strip().split(',')
+            tickNumber = int(tick_data[0])
+            sensorX = float(tick_data[1])
+            sensorY = float(tick_data[2])
+            dataFrames.append(pd.DataFrame({'sensor_x': [sensorX], 'sensor_y': [sensorY], 'tick': [tickNumber]}))
+    return dataFrames
 
 
 def plotPoints(ax, data_frame):
@@ -27,8 +36,8 @@ def createSlideshow(data_frames):
     plt.subplots_adjust(bottom=0.25)
     currentFrame = [0]
 
-    def update(frameChange):
-        currentFrame[0] = (currentFrame[0] + frameChange) % len(data_frames)
+    def update(val):
+        currentFrame[0] = int(val)
         print(f"Updating to frame: {currentFrame[0]}")
         plotPoints(ax, data_frames[currentFrame[0]])
         fig.canvas.draw()
@@ -45,5 +54,5 @@ def createSlideshow(data_frames):
 
 if __name__ == '__main__':
     topLevelManipulatedAudioFolder = GlobalConstants.MANIPULATED_AUDIO_FOLDER
-    dataFrames = readCSVFile(topLevelManipulatedAudioFolder + '/robin/robin1')
+    dataFrames = readAllTicksFromCSV(18, topLevelManipulatedAudioFolder + '/robin/robin0/data.csv')
     createSlideshow(dataFrames)

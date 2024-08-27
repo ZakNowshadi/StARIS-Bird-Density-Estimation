@@ -301,7 +301,7 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
 
             # Re-draw the target each time the bird moves
             bird.targetObject.draw(ax)
-            # Re-draw the home each time the bird moves
+            # Re-drawing the home each time the bird moves
             bird.homeObject.draw(ax)
 
             # Drawing a line from the bird to the home

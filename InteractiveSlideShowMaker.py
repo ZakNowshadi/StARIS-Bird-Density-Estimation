@@ -2,9 +2,7 @@ import os
 import pandas as pd
 
 from matplotlib import pyplot as plt
-from matplotlib.animation import FuncAnimation
-from matplotlib.image import imread
-from matplotlib.widgets import Button
+from matplotlib.widgets import Slider
 
 import GlobalConstants
 
@@ -17,16 +15,6 @@ def readCSVFile(folderPath):
     return dataFrame
 
 
-def addNavigationButtons(fig, update_func):
-    axprev = fig.add_axes([0.7, 0.05, 0.1, 0.075])
-    axnext = fig.add_axes([0.81, 0.05, 0.1, 0.075])
-    bnext = Button(axnext, 'Next')
-    bprev = Button(axprev, 'Previous')
-
-    bnext.on_clicked(lambda event: update_func(1))
-    bprev.on_clicked(lambda event: update_func(-1))
-
-
 def plotPoints(ax, data_frame):
     ax.clear()
     ax.plot(data_frame['sensor_x'], data_frame['sensor_y'], 'o')
@@ -36,6 +24,7 @@ def plotPoints(ax, data_frame):
 
 def createSlideshow(data_frames):
     fig, ax = plt.subplots()
+    plt.subplots_adjust(bottom=0.25)
     currentFrame = [0]
 
     def update(frameChange):
@@ -44,7 +33,11 @@ def createSlideshow(data_frames):
         plotPoints(ax, data_frames[currentFrame[0]])
         fig.canvas.draw()
 
-    addNavigationButtons(fig, update)
+    # Making the slider
+    axSlider = plt.axes([0.2, 0.1, 0.65, 0.03], facecolor='lightgoldenrodyellow')
+    slider = Slider(axSlider, 'Frame', 0, len(data_frames) - 1, valinit=0, valstep=1)
+    slider.on_changed(update)
+
     # For the first frame
     update(0)
     plt.show()

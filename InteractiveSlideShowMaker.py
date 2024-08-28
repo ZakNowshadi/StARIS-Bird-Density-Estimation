@@ -8,18 +8,20 @@ from matplotlib.widgets import Slider
 import GlobalConstants
 
 
-def readAllTicksFromCSV(tick, filePath):
+def readAllTicksFromCSV(filePath):
 
     # Validation for the file path
     assert os.path.exists(filePath), f"ERROR - The file path does not exist: {filePath}"
 
     dataFrames = []
     with open(filePath, 'r') as file:
+        # Skipping the header
+        next(file)
         for line in file:
-            tick_data = line.strip().split(',')
-            tickNumber = int(tick_data[0])
-            sensorX = float(tick_data[1])
-            sensorY = float(tick_data[2])
+            tickData = line.strip().split(',')
+            tickNumber = int(tickData[0])
+            sensorX = float(tickData[1])
+            sensorY = float(tickData[2])
             dataFrames.append(pd.DataFrame({'sensor_x': [sensorX], 'sensor_y': [sensorY], 'tick': [tickNumber]}))
     return dataFrames
 
@@ -54,5 +56,5 @@ def createSlideshow(data_frames):
 
 if __name__ == '__main__':
     topLevelManipulatedAudioFolder = GlobalConstants.MANIPULATED_AUDIO_FOLDER
-    dataFrames = readAllTicksFromCSV(18, topLevelManipulatedAudioFolder + '/robin/robin0/data.csv')
+    dataFrames = readAllTicksFromCSV(topLevelManipulatedAudioFolder + '/robin/robin0/data.csv')
     createSlideshow(dataFrames)

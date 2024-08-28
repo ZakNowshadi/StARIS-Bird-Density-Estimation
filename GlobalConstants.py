@@ -2,7 +2,7 @@
 # as all the places where these paths are used in the codebase are dependent on these global variables below
 
 global SIMULATION_FRAME_SAVING_FOLDER
-SIMULATION_FRAME_SAVING_FOLDER = 'SimulationSavedTickByTick'
+SIMULATION_FRAME_SAVING_FOLDER = 'SimulationSavedFrameByFrame'
 global MANIPULATED_AUDIO_FOLDER
 MANIPULATED_AUDIO_FOLDER = 'Audio/ManipulatedAudioFiles'
 global ORIGINAL_AUDIO_FOLDER

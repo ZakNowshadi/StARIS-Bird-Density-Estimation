@@ -1,7 +1,5 @@
 import os
 import pandas as pd
-from PIL.ImageFont import truetype
-
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Slider
 
@@ -15,7 +13,7 @@ def readAllTicksFromCSV(filePath):
     dataFrames = []
     with open(filePath, 'r') as file:
         # Getting the name of the bird from the file path
-        birdName = filePath.split('/')[-2]
+        birdName = filePath.split(os.sep)[-2]
         # Skipping the header
         next(file)
         for line in file:
@@ -29,8 +27,8 @@ def readAllTicksFromCSV(filePath):
 
 def readAllTicksFromMultipleCSVs(filePaths):
     allDataFrames = []
-    for filePaths in filePaths:
-        allDataFrames.extend(readAllTicksFromCSV(filePaths))
+    for filePath in filePaths:
+        allDataFrames.extend(readAllTicksFromCSV(filePath))
     return allDataFrames
 
 
@@ -69,11 +67,19 @@ def createSlideshow(dataFrames):
 
 if __name__ == '__main__':
     topLevelManipulatedAudioFolder = GlobalConstants.MANIPULATED_AUDIO_FOLDER
-    filePaths = [
-        os.path.join(topLevelManipulatedAudioFolder, 'robin/robin0/data.csv'),
-        os.path.join(topLevelManipulatedAudioFolder, 'robin/robin1/data.csv'),
-        os.path.join(topLevelManipulatedAudioFolder, 'blackbird/blackbird0/data.csv'),
-        os.path.join(topLevelManipulatedAudioFolder, 'blackbird/blackbird1/data.csv'),
-    ]
+    filePaths = []
+    # Finding all CSVs in the manipulated audio folder
+    for root, dirs, files in os.walk(topLevelManipulatedAudioFolder):
+        for file in files:
+            if file.endswith('.csv'):
+                filePaths.append(os.path.join(root, file))
+
+
+    # filePaths = [
+    #     os.path.join(topLevelManipulatedAudioFolder, 'robin/robin0/data.csv'),
+    #     os.path.join(topLevelManipulatedAudioFolder, 'robin/robin1/data.csv'),
+    #     os.path.join(topLevelManipulatedAudioFolder, 'blackbird/blackbird0/data.csv'),
+    #     os.path.join(topLevelManipulatedAudioFolder, 'blackbird/blackbird1/data.csv'),
+    # ]
     dataFrames = readAllTicksFromMultipleCSVs(filePaths)
     createSlideshow(dataFrames)

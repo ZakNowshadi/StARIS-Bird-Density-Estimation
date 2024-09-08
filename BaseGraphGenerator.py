@@ -6,6 +6,7 @@ import GlobalConstants
 # Making the R-Tree index
 sensorZoneIndex = index.Index()
 
+
 # A sensor class
 class SensorZone:
     instances = []

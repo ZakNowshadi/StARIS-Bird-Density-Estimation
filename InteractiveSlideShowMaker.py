@@ -2,7 +2,6 @@ import os
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Slider
-
 import GlobalConstants
 
 
@@ -21,7 +20,8 @@ def readAllTicksFromCSV(filePath):
             frameNumber = int(tickData[0])
             sensorX = float(tickData[1])
             sensorY = float(tickData[2])
-            dataFrames.append(pd.DataFrame({'sensor_x': [sensorX], 'sensor_y': [sensorY], 'frame': [frameNumber], 'name': [birdName]}))
+            dataFrames.append(pd.DataFrame(
+                {'sensor_x': [sensorX], 'sensor_y': [sensorY], 'frame': [frameNumber], 'name': [birdName]}))
     return dataFrames
 
 
@@ -32,12 +32,14 @@ def readAllTicksFromMultipleCSVs(filePaths):
     return allDataFrames
 
 
+# Iterating over the data frame to plot the relevant points of the sensors that make the detections
 def plotPoints(ax, dataFrames, currentFrame):
     ax.clear()
     for df in dataFrames:
         dataFrameFrameData = df[df['frame'] == currentFrame]
         if not dataFrameFrameData.empty:
-            ax.plot(dataFrameFrameData['sensor_x'], dataFrameFrameData['sensor_y'], 'o', label=dataFrameFrameData['name'].iloc[0])
+            ax.plot(dataFrameFrameData['sensor_x'], dataFrameFrameData['sensor_y'], 'o',
+                    label=dataFrameFrameData['name'].iloc[0])
     ax.set_xlim(0, GlobalConstants.MAX_GRAPH_SIZE)
     ax.set_ylim(0, GlobalConstants.MAX_GRAPH_SIZE)
     ax.legend()
@@ -74,12 +76,5 @@ if __name__ == '__main__':
             if file.endswith('.csv'):
                 filePaths.append(os.path.join(root, file))
 
-
-    # filePaths = [
-    #     os.path.join(topLevelManipulatedAudioFolder, 'robin/robin0/data.csv'),
-    #     os.path.join(topLevelManipulatedAudioFolder, 'robin/robin1/data.csv'),
-    #     os.path.join(topLevelManipulatedAudioFolder, 'blackbird/blackbird0/data.csv'),
-    #     os.path.join(topLevelManipulatedAudioFolder, 'blackbird/blackbird1/data.csv'),
-    # ]
     dataFrames = readAllTicksFromMultipleCSVs(filePaths)
     createSlideshow(dataFrames)

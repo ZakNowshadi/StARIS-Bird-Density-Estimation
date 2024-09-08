@@ -10,7 +10,6 @@ def saveManipulatedAudioFile(bird, count):
     speciesFolder = manipulatedAudioFolder + '/' + bird.getSpecies()
     # Checking if the species folder exists
     if not os.path.exists(speciesFolder):
-        # If it does not, make it
         os.makedirs(speciesFolder)
     birdFolder = speciesFolder + '/' + bird.getName()
     # Checking if the bird folder exists
@@ -18,6 +17,8 @@ def saveManipulatedAudioFile(bird, count):
         # If it does not, make it
         os.makedirs(birdFolder)
 
+    # Each audio recording is titled with the format (seperated by underscores): frame count, sensor x cored,
+    # sensor y cord
     fileName = f"{count}_{bird.currentSensorZone.getX()},{bird.currentSensorZone.getY()}.wav"
     filePath = birdFolder + '/' + fileName
 

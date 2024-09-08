@@ -1,6 +1,3 @@
-import math
-from math import radians
-
 from matplotlib import pyplot as plt
 from rtree import index
 
@@ -8,7 +5,6 @@ import GlobalConstants
 
 # Making the R-Tree index
 sensorZoneIndex = index.Index()
-
 
 # A sensor class
 class SensorZone:
@@ -62,6 +58,7 @@ def main(ax, drawGraph):
     maxSize = GlobalConstants.MAX_GRAPH_SIZE
     differenceBetweenMaxAndMask = maxSize - maskSize
     # Finding a radius to maximise the space being sensed by the 5 sensors within the mask, without there being overlap
+    # TODO: Find a formula such that this scaling is not hard coded into it
     radius = maskSize / 7
 
     # Making the centre sensor object
@@ -73,16 +70,16 @@ def main(ax, drawGraph):
 
     centreSensor = SensorZone(actualCentralX, actualCentralY, maxSize, radius)
 
-    # Making the corner sensor objects fully within the mask
-    # Each point needs to be 1 diameter away from the center of the mask and 1 radius away from the edge of the mask
-    # To not overlap with the other sensors
+    # Making the corner sensor objects fully within the mask Each point needs to be 1 diameter away from the center
+    # of the mask (as one radius from itself and another from the central circle) and 1 radius away from the edge of
+    # the mask To not overlap with the other sensors
     upperLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, differenceBetweenMaxAndMask + radius, maxSize,
                                  radius)
     upperRightSensor = SensorZone(maskSize - radius, differenceBetweenMaxAndMask + radius, maxSize, radius)
     lowerLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, maskSize - radius, maxSize, radius)
     lowerRightSensor = SensorZone(maskSize - radius, maskSize - radius, maxSize, radius)
 
-    # Drawing a blue box around the mask
+    # Drawing a blue box around the mask, to make it more visible
     plt.plot([differenceBetweenMaxAndMask, maskSize], [differenceBetweenMaxAndMask, differenceBetweenMaxAndMask], 'b')
     plt.plot([differenceBetweenMaxAndMask, maskSize], [maskSize, maskSize], 'b')
     plt.plot([differenceBetweenMaxAndMask, differenceBetweenMaxAndMask], [differenceBetweenMaxAndMask, maskSize], 'b')
@@ -96,6 +93,7 @@ def main(ax, drawGraph):
     if drawGraph:
         # Drawing each sensor zone's radius
         # Draw a green of circle around each sensor
+        # TODO: Maybe iterate over the objects rather than manually doing it for each of the sensors
 
         centreSensor.drawSensorZone(ax)
         upperLeftSensor.drawSensorZone(ax)

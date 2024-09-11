@@ -38,8 +38,11 @@ def plotPoints(ax, dataFrames, currentFrame):
     for df in dataFrames:
         dataFrameFrameData = df[df['frame'] == currentFrame]
         if not dataFrameFrameData.empty:
-            ax.plot(dataFrameFrameData['sensor_x'], dataFrameFrameData['sensor_y'], 'o',
-                    label=dataFrameFrameData['name'].iloc[0])
+            # Scaling the dot size dependent on how many there are on each dot.
+            groupedPoints = dataFrameFrameData.groupby(['sensor_x', 'sensor_y']).size().reset_index(name='count')
+            for _, row in groupedPoints.iterrows():
+                ax.plot(dataFrameFrameData['sensor_x'], dataFrameFrameData['sensor_y'], 'o',
+                        label=dataFrameFrameData['name'].iloc[0], markersize=row['count'] * 5)
     ax.set_xlim(0, GlobalConstants.MAX_GRAPH_SIZE)
     ax.set_ylim(0, GlobalConstants.MAX_GRAPH_SIZE)
     ax.legend()

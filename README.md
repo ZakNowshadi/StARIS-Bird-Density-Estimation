@@ -8,6 +8,8 @@ This program has two possible strands of running:
 
 In both strands the final output of the CSVs file, which later analysis is dependent on is done the same.
 
+Currently only works for 2 pre-defined species namely: robins and blackbirds and it assumes an equal amount of both.
+
 ### Set up instructions:
 
 1. Clone the repository

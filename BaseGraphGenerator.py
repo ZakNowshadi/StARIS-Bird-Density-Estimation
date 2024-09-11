@@ -3,11 +3,10 @@ from rtree import index
 
 import GlobalConstants
 
-# Making the R-Tree index
+# Making the R-Tree index for quicker searching of which sensor zone a bird is in
 sensorZoneIndex = index.Index()
 
 
-# A sensor class
 class SensorZone:
     instances = []
 
@@ -43,7 +42,7 @@ class SensorZone:
     def drawSensorZone(self, ax):
         # Plotting the sensor itself
         plt.plot(self.x, self.y, 'mp')
-        # Draw a green of circle around each sensor
+        # Draw a green circle around each sensor
         circle = plt.Circle((self.x, self.y), self.radius, color='g', fill=False)
         ax.add_artist(circle)
 
@@ -71,9 +70,8 @@ def main(ax, drawGraph):
 
     centreSensor = SensorZone(actualCentralX, actualCentralY, maxSize, radius)
 
-    # Making the corner sensor objects fully within the mask Each point needs to be 1 diameter away from the center
-    # of the mask (as one radius from itself and another from the central circle) and 1 radius away from the edge of
-    # the mask To not overlap with the other sensors
+    # Making the corner sensor objects fully within the mask, each point needs to be 1 diameter away from the center
+    # of the mask (as one radius from itself and another from the central circle)
     upperLeftSensor = SensorZone(differenceBetweenMaxAndMask + radius, differenceBetweenMaxAndMask + radius, maxSize,
                                  radius)
     upperRightSensor = SensorZone(maskSize - radius, differenceBetweenMaxAndMask + radius, maxSize, radius)

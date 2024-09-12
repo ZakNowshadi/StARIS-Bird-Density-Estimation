@@ -8,6 +8,7 @@ sensorZoneIndex = index.Index()
 
 
 class SensorZone:
+    # List of all the sensor zones for the R-Tree to work with
     instances = []
 
     def __init__(self, x, y, sizeOfGraph, radius):
@@ -23,21 +24,11 @@ class SensorZone:
         sensorZoneIndex.insert(len(SensorZone.instances) - 1,
                                (self.x - self.radius, self.y - self.radius, self.x + self.radius, self.y + self.radius))
 
-    # Getter for x
     def getX(self):
         return self.x
 
-    # Getter for y
     def getY(self):
         return self.y
-
-    # Setter for x
-    def setX(self, x):
-        self.x = x
-
-    # Setter for y
-    def setY(self, y):
-        self.y = y
 
     def drawSensorZone(self, ax):
         # Plotting the sensor itself

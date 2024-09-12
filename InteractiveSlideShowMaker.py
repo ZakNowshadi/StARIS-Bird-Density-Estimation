@@ -25,6 +25,7 @@ def readAllTicksFromCSV(filePath):
     return dataFrames
 
 
+# Making a list of data frames from multiple CSVs to then be put to the graph
 def readAllTicksFromMultipleCSVs(filePaths):
     allDataFrames = []
     for filePath in filePaths:
@@ -38,11 +39,9 @@ def plotPoints(ax, dataFrames, currentFrame):
     for df in dataFrames:
         dataFrameFrameData = df[df['frame'] == currentFrame]
         if not dataFrameFrameData.empty:
-            # Scaling the dot size dependent on how many there are on each dot.
-            groupedPoints = dataFrameFrameData.groupby(['sensor_x', 'sensor_y']).size().reset_index(name='count')
-            for _, row in groupedPoints.iterrows():
-                ax.plot(dataFrameFrameData['sensor_x'], dataFrameFrameData['sensor_y'], 'o',
-                        label=dataFrameFrameData['name'].iloc[0], markersize=row['count'] * 5)
+            grouped = dataFrameFrameData.groupby(['sensor_x', 'sensor_y']).size().reset_index(name='count')
+            ax.scatter(grouped['sensor_x'], grouped['sensor_y'], s=grouped['count'] * 20,
+                       label=dataFrameFrameData['name'].iloc[0])
     ax.set_xlim(0, GlobalConstants.MAX_GRAPH_SIZE)
     ax.set_ylim(0, GlobalConstants.MAX_GRAPH_SIZE)
     ax.legend()
@@ -55,7 +54,6 @@ def createSlideshow(dataFrames):
 
     def update(val):
         currentFrame[0] = int(val)
-        print(f"Updating to frame: {currentFrame[0]}")
         plotPoints(ax, dataFrames, [currentFrame[0]])
         fig.canvas.draw()
 

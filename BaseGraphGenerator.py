@@ -1,6 +1,5 @@
 from matplotlib import pyplot as plt
 from rtree import index
-
 import GlobalConstants
 
 # Making the R-Tree index for quicker searching of which sensor zone a bird is in
@@ -18,7 +17,6 @@ class SensorZone:
         self.y = max(self.radius, min(y, sizeOfGraph - self.radius))
         SensorZone.instances.append(self)
         # Adding the sensor into the R-Tree
-        # Making a bounding box around the sensor
         # With the distance from the sensor to the edge of the box being the radius of the sensor
         # In effect the true sensor zone circle is contained within the box being created here
         sensorZoneIndex.insert(len(SensorZone.instances) - 1,
@@ -33,7 +31,7 @@ class SensorZone:
     def drawSensorZone(self, ax):
         # Plotting the sensor itself
         plt.plot(self.x, self.y, 'mp')
-        # Draw a green circle around each sensor
+        # Draw a green circle around each sensor to represent the radius in which it can hear noises
         circle = plt.Circle((self.x, self.y), self.radius, color='g', fill=False)
         ax.add_artist(circle)
 
@@ -49,7 +47,7 @@ def main(ax, drawGraph):
     maxSize = GlobalConstants.MAX_GRAPH_SIZE
     differenceBetweenMaxAndMask = maxSize - maskSize
     # Finding a radius to maximise the space being sensed by the 5 sensors within the mask, without there being overlap
-    # TODO: Find a formula such that this scaling is not hard coded into it
+    # TODO: Find a formula such that this scaling and is not hard coded into it
     radius = maskSize / 7
 
     # Making the centre sensor object
@@ -82,7 +80,6 @@ def main(ax, drawGraph):
 
     if drawGraph:
         # Drawing each sensor zone's radius
-        # Draw a green of circle around each sensor
         # TODO: Maybe iterate over the objects rather than manually doing it for each of the sensors
 
         centreSensor.drawSensorZone(ax)

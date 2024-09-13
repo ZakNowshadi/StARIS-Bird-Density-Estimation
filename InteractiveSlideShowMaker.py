@@ -39,6 +39,7 @@ def plotPoints(ax, dataFrames, currentFrame):
     for df in dataFrames:
         dataFrameFrameData = df[df['frame'] == currentFrame]
         if not dataFrameFrameData.empty:
+            # TODO: Here is where the size manipulation of the dots should occur
             grouped = dataFrameFrameData.groupby(['sensor_x', 'sensor_y']).size().reset_index(name='count')
             ax.scatter(grouped['sensor_x'], grouped['sensor_y'], s=grouped['count'] * 20,
                        label=dataFrameFrameData['name'].iloc[0])

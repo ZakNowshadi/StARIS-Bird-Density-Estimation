@@ -1,6 +1,5 @@
 import os
 import shutil
-
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.animation import FuncAnimation
@@ -32,6 +31,8 @@ class GraphObject:
                                                                                                - slightReduction)
 
     def draw(self, ax):
+        # Adjusting the size of the image to fit the graph such that it appears consistent no matter the size of the
+        # graph
         imageSizeAdjustment = 14
         if self.image is not None and self.x is not None and self.y is not None:
             imageWidth = self.sizeOfGraph / imageSizeAdjustment
@@ -107,8 +108,9 @@ class Bird(GraphObject):
         self.name = name
         self.species = species
         # Will be null if in no sensor zone
-        # Needs to be know so know which sensor to play the sound to as
-        # Under current implementation only one sensor should hear a bird at a time
+        # Needs to be know so know which sensor to play the sound to as under the
+        # current implementation only one sensor should hear a bird at a time due to the lack of overlaps between the
+        # sensor zones
         self.currentSensorZone = None
         self.distanceFromSensor = 0
         self.speed = speed
@@ -131,7 +133,7 @@ class Bird(GraphObject):
     def getName(self):
         return self.name
 
-    # Function to allow the clear showing of when a bird is inside a sensor zone
+    # Function to allow the clear showing of when a bird is inside a sensor zone and makes a detectable whistle
     def drawTemporaryCircle(self, ax):
         radius = self.sizeOfGraph / 20
         colour = 'purple'
@@ -171,7 +173,7 @@ class Bird(GraphObject):
                 self.currentSensorZone = sensorZone
                 self.distanceFromSensor = distance
 
-                # Drawing a temporary circle to show the user that the bird is in a sensor zone
+                # Drawing a temporary circle to show the user that the bird made a detectable whistle in a sensor zone
                 if drawGraph:
                     self.drawTemporaryCircle(plt.gca())
 
@@ -301,7 +303,7 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
 
             # Re-draw the target each time the bird moves
             bird.targetObject.draw(ax)
-            # Re-drawing the home each time the bird moves
+            # Likewise for the home
             bird.homeObject.draw(ax)
 
             # Drawing a line from the bird to the home
@@ -318,7 +320,6 @@ def update(frame, birds, ax, sizeofGraph, drawGraph):
 
         plt.draw()
     # If not in a sensor zone, the bird will not make a sound
-    # Incrementing the count
 
     # The comma at the end is to unpack the tuple, so it can be passed as expected into caller
     return bird.artist,
@@ -363,11 +364,11 @@ def main(drawGraph):
     # Setting up the plot
     fig, ax = plt.subplots()
     # Making the base graph
-    # Ensuring the mask is slightly smaller than the maximum size of the graph
     BaseGraphGenerator.main(ax, drawGraph)
 
     # Running the program not using any matplotlib graphics
-    limiter = 20
+    # Scaling cap to ensure the program does not run for too long
+    limiter = 100
     if not drawGraph:
         for i in range(sizeofGraph * limiter):
             update(i, birds, None, sizeofGraph, drawGraph)

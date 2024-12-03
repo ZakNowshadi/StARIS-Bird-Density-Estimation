@@ -30,4 +30,4 @@ Possible Next Steps:
 5. Make the simulation into tiles which can be put together to make a larger lattice.
 6. Add an option so the user can remove all print statements from the backend when it is running.
 
-Made by Zak Nowshadi under the supervision of Prof. Simon Dobson and Dr Alison Johnston at the University of St Andrews.
+Made by Zak Nowshadi and Aneesh Subramanian under the supervision of Prof. Simon Dobson and Dr Alison Johnston at the University of St Andrews.

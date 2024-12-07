@@ -5,9 +5,10 @@ import matplotlib.image as mpimg
 from matplotlib.animation import FuncAnimation
 import AudioManipulator
 import BaseGraphGenerator
-import random
 import GlobalConstants
 
+import scipy
+import numpy as np
 
 # The size of the image will be divided by this number to make it fit the graph
 # Such that the image will be the same relative size no matter the size of the graph
@@ -167,20 +168,46 @@ class Bird(GraphObject):
             # But also need to check the bird is inside the mask
             # And also that the bird is currently whistling
             self.checkIfWhistling()
-            if (distance != -1 and BaseGraphGenerator.isPointInSideTheMask(self.x, self.y,
-                                                                           GlobalConstants.MASK_MASK_SIZE,
-                                                                           self.sizeOfGraph) and self.currentlyWhistling):
-                self.currentSensorZone = sensorZone
-                self.distanceFromSensor = distance
+            if (distance != -1 and self.currentlyWhistling):
+                
+                # implementing the formula in the 2009 Dawson, D.K. & Efford study
+                
+                # use of arbitrary beta values, a potential improvement to be looked into
+                beta0 = 80
+                if distance <= 1:
+                    mu = beta0
+                else:
+                    beta1 = 0.1
+                    mu = beta0 - 10 * np.log10(distance ** 2) + beta1 * (distance - 1)
 
-                # Drawing a temporary circle to show the user that the bird made a detectable whistle in a sensor zone
-                if drawGraph:
-                    self.drawTemporaryCircle(plt.gca())
+                normalDistributionAt0 = scipy.stats.norm(0)
+                receivedSignalStrength = mu + normalDistribution.rsv(size = 1)
+                # arbitrary choices of c and sigma
+                c = 20
+                sigma = 0.1
+                gamma = c - mu / sigma
 
-                print("\033[92m" + self.name + " made a detectable whistle" + "\033[0m")
-                print("Sensor zone coords: ", sensorZone.getX(), sensorZone.getY())
-                print("Distance from sensor: ", distance)
-                return True
+                delta = 0
+                if mu > c:
+                    delta = 1
+                
+                normalDistributionAtGamma = scipy.stats.norm(gamma)
+                probabilityOfDetection = normalDistributionAtGamma(size = 1) ** (1 - delta)
+
+                # arbitrary to see if the probability is sufficient: to be improved upon
+                if probabilityOfDetection > 0.5:
+
+                    self.currentSensorZone = sensorZone
+                    self.distanceFromSensor = distance
+
+                    # Drawing a temporary circle to show the user that the bird made a detectable whistle in a sensor zone
+                    if drawGraph:
+                        self.drawTemporaryCircle(plt.gca())
+
+                    print("\033[92m" + self.name + " made a detectable whistle" + "\033[0m")
+                    print("Sensor zone coords: ", sensorZone.getX(), sensorZone.getY())
+                    print("Distance from sensor: ", distance)
+                    return True
 
         # If the bird is not in any sensor zone
         self.currentSensorZone = None
